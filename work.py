@@ -32,15 +32,60 @@ def genColorStop(hexColor, hexColorStopId, colorWantedStopId):
 
     med_distances = [0,0,0]
     n = 0
+    # max_sim = max(cosine_sim(colorToVect(hexColor), colors[key][str(hexColorStopId)]) for key in mags.keys())
 
+    # for key in mags.keys():
+    #     key_color = colors[key][str(hexColorStopId)]
+    #     sim = cosine_sim(colorToVect(hexColor), colorToVect(key_color))
+    #     # give more importance to similar color
+    #     if max_sim == max_sim:
+    #         med_distances[0] += mags[key][0] * sim * 10
+    #         med_distances[1] += mags[key][1] * sim * 10
+    #         med_distances[2] += mags[key][2] * sim * 10
+    #         n += 10
+    #     else:
+    #         med_distances[0] += mags[key][0] * sim
+    #         med_distances[1] += mags[key][1] * sim
+    #         med_distances[2] += mags[key][2] * sim
+    #         n += 1
+
+    max_sim = max(
+    cosine_sim(colorToVect(hexColor), colorToVect(colors[key][str(hexColorStopId)])) 
+    for key in mags.keys()
+    )
+
+    # Initialize values to accumulate the weighted color distance
+    med_distances = [0, 0, 0]  # [r, g, b]
+    n = 0
+
+    # Iterate over each color and apply the weighted distance based on similarity
     for key in mags.keys():
         key_color = colors[key][str(hexColorStopId)]
-        sim = cosine_sim(colorToVect(hexColor), colorToVect(key_color))
-        dists = []
-        med_distances[0] += mags[key][0] * sim
-        med_distances[1] += mags[key][1] * sim
-        med_distances[2] += mags[key][2] * sim
-        n += 1
+        
+        # Calculate similarity once and store it
+        color_distance_weight = cosine_sim(colorToVect(hexColor), colorToVect(key_color))
+        
+        # If the color is the most similar (max similarity), give it more importance
+        if color_distance_weight == max_sim:
+            weight = 25
+        else:
+            weight = 1
+        
+        # Update the color distance values with weight adjustment
+        med_distances[0] += mags[key][0] * color_distance_weight * weight
+        med_distances[1] += mags[key][1] * color_distance_weight * weight
+        med_distances[2] += mags[key][2] * color_distance_weight * weight
+        
+        # Accumulate the total weight
+        n += weight
+
+    # Handle division by zero if there are no entries or if no weights were added
+    if n != 0:
+        dist = [distance / n for distance in med_distances]
+    else:
+        # If no valid calculations, set to default values
+        dist = [0, 0, 0]
+
 
     dist = [
         med_distances[0]/n , med_distances[1]/n , med_distances[2]/n 
