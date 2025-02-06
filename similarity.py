@@ -17,6 +17,17 @@ def cosine_sim(vect1,vect2):
     
     return dot_prod(vect1,vect2)/(mag1*mag2)
 
+def decimalToHex(number):
+    hex_value = hex(number)[2:]
+    hex_value = hex_value.upper()
+    try: 
+        if int(hex_value) < 10:
+            return f"0{hex_value}"
+    except ValueError:
+        return hex_value
+    return hex_value
+
+
 def hexToDecimal(string):
     res = 0
     i = 0
@@ -44,4 +55,13 @@ def colorToVect(color):
     g = hexToDecimal(color[3:5])
     b = hexToDecimal(color[5:7])
     return [r,g,b]
+
+
+
+
+def vectToColor(vect):
+    r = decimalToHex(vect[0])
+    g = decimalToHex(vect[1])
+    b = decimalToHex(vect[2])
+    return f"#{r}{g}{b}"
 
