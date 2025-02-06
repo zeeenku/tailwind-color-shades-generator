@@ -18,40 +18,37 @@
     height: 100vh;
     }
 
-    .grid-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    max-width: 1200px;
-    width: 100%;
-    background-color: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    }
+   .grid-container {
+  display: grid;
+  grid-template-columns: repeat(11, 1fr); /* Creates 11 equal-width columns */
+  max-width: 1000px;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
 
     .color-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 15px;
+    padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
-    text-align: center;
+    }
+
+    .color-card-color {
+    width:100%;
+    aspect-ratio: 3/2;
+    border-radius: 8px;
     }
 
     .color-card:hover {
     transform: scale(1.05);
     }
 
-    .color-box {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-    }
 
     .color-id {
     font-weight: bold;
@@ -62,7 +59,7 @@
     .color-name {
     font-size: 12px;
     color: #777;
-    margin-bottom: 5px;
+    margin: 5px 0px;
     }
 
     .shade-name {
@@ -76,70 +73,70 @@
 <h1>myColor</h1>
 <div class="grid-container">
 
-        <div class="color-card" style="background-color: #75FFF2;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #C8CAFF;"></div>
             <div class="color-id">50</div>
-            <div class="color-name">#75FFF2</div>
+            <div class="color-name">#C8CAFF</div>
         </div>
         
-        <div class="color-card" style="background-color: #6CFFEB;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #BFC4FF;"></div>
             <div class="color-id">100</div>
-            <div class="color-name">#6CFFEB</div>
+            <div class="color-name">#BFC4FF</div>
         </div>
         
-        <div class="color-card" style="background-color: #5CFFDF;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #B0B8FF;"></div>
             <div class="color-id">200</div>
-            <div class="color-name">#5CFFDF</div>
+            <div class="color-name">#B0B8FF</div>
         </div>
         
-        <div class="color-card" style="background-color: #46FFD0;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #9AA5FF;"></div>
             <div class="color-id">300</div>
-            <div class="color-name">#46FFD0</div>
+            <div class="color-name">#9AA5FF</div>
         </div>
         
-        <div class="color-card" style="background-color: #27F9BA;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #7B86FF;"></div>
             <div class="color-id">400</div>
-            <div class="color-name">#27F9BA</div>
+            <div class="color-name">#7B86FF</div>
         </div>
         
-        <div class="color-card" style="background-color: #10dda6;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #6366f1;"></div>
             <div class="color-id">500</div>
-            <div class="color-name">#10dda6</div>
+            <div class="color-name">#6366f1</div>
         </div>
         
-        <div class="color-card" style="background-color: #00C394;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #514ADE;"></div>
             <div class="color-id">600</div>
-            <div class="color-name">#00C394</div>
+            <div class="color-name">#514ADE</div>
         </div>
         
-        <div class="color-card" style="background-color: #00B185;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #4338CD;"></div>
             <div class="color-id">700</div>
-            <div class="color-name">#00B185</div>
+            <div class="color-name">#4338CD</div>
         </div>
         
-        <div class="color-card" style="background-color: #00A475;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #352BBB;"></div>
             <div class="color-id">800</div>
-            <div class="color-name">#00A475</div>
+            <div class="color-name">#352BBB</div>
         </div>
         
-        <div class="color-card" style="background-color: #009C69;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #2B23AE;"></div>
             <div class="color-id">900</div>
-            <div class="color-name">#009C69</div>
+            <div class="color-name">#2B23AE</div>
         </div>
         
-        <div class="color-card" style="background-color: #008A54;">
-            <div class="color-box" style="background-color: #ff6347;"></div>
+        <div class="color-card">
+            <div class="color-card-color" style="background-color: #171196;"></div>
             <div class="color-id">950</div>
-            <div class="color-name">#008A54</div>
+            <div class="color-name">#171196</div>
         </div>
         
 </div>

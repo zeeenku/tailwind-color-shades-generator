@@ -5,7 +5,7 @@ from work import genColorStop
 
 # ! todo validate it has 6 chars
 hexColorStopId = 500
-hexColor = "#10dda6"
+hexColor = "#6366f1"
 colorName = "myColor"
 shadeids  = [50,100,200,300,400,500,600,700,800,900,950]
 shades = {}
