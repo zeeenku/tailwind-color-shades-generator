@@ -4,8 +4,8 @@ from generate import generateGrid
 from work import genColorStop
 
 # ! todo validate it has 6 chars
-hexColorStopId = 500
-hexColor = "#10abcd"
+hexColorStopId =400
+hexColor = "#d5aa92"
 colorName = "myColor"
 shadeids  = [50,100,200,300,400,500,600,700,800,900,950]
 shades = {}

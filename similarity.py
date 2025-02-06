@@ -20,11 +20,8 @@ def cosine_sim(vect1,vect2):
 def decimalToHex(number):
     hex_value = hex(number)[2:]
     hex_value = hex_value.upper()
-    try: 
-        if int(hex_value) < 10:
-            return f"0{hex_value}"
-    except ValueError:
-        return hex_value
+    if len(hex_value) == 1:
+        hex_value = "0" + hex_value
     return hex_value
 
 

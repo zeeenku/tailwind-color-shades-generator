@@ -96,5 +96,6 @@ def genColorStop(hexColor, hexColorStopId, colorWantedStopId):
     new_res_vect[0] = max(0, min(255, int(new_res_vect[0] + dist[0])))
     new_res_vect[1] = max(0, min(255, int(new_res_vect[1] + dist[1])))
     new_res_vect[2] = max(0, min(255, int(new_res_vect[2] + dist[2])))
+    print(new_res_vect)
     return vectToColor(new_res_vect)
 
