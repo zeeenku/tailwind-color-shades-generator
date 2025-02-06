@@ -1,6 +1,6 @@
 
 
-from generate import generateGrid
+from data import generateGrid
 from work import genColorStop
 
 # ! todo validate it has 6 chars
