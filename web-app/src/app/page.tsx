@@ -25,7 +25,7 @@ export default function Home() {
 
 
 {/* donno why there is an extra 1rem here */}
-        <section className="w-[calc(100vw-22rem)]">
+        <section className="w-[calc(100vw-23rem)]">
 
           <section className="flex w-full max-h-full">
             <section className="w-[calc(100%-15rem)]">
