@@ -22,7 +22,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 
 
 type Color = {
@@ -46,40 +46,97 @@ export default function Sidebar() {
             id : 600,
             role : "secondary"
         },
-
-
-        {
-            hexVal : "#f472b6",
-            name : "pink",
-            id : 400,
-            role : "tertiary"
-        },
-
     ];
+
+
     const [colors, setColors] = useState(cs);
 
-    const removeColor = (el : Color) => {
+    // must be better just prototype
+    const getRoleByIndex = (index:number) => {
+        return `${index}nth`;
+    }
+
+
+    const removeColor = (role : string) => {
+
+        if(colors.length < 2) return;
+
+        setColors( (colors)=> colors.filter((el)=>(el.role !== role)).map((el,index)=>{
+            // rearanging roles
+            el.role = getRoleByIndex(index);
+            return el;
+        })
+        )
 
     }
 
     const addColor = () => {
 
+        // gen random hex
+        // detect name from hex code
+        // detect best id based on color
+        // detect role based on order
+
+        const c = {
+            hexVal : "#f472b6",
+            name : "pink",
+            id : 400,
+            role : "tertiary"
+        };
+
+        setColors((prevColors) => [
+            ...prevColors,
+            c
+        ]);        
     }
 
-    const onChangeColor = () => {
-
+    const onChangeColor = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
+        setColors( (colors)=> colors.map((el)=>{
+                if(el.role === role) el.hexVal = event.target.value;
+                return el;
+                 // gen random hex
+                // detect name from hex code
+                // detect best id based on color
+                // detect role based on order
+            })
+            )
     }
 
-    const onPasteColor = () => {
-
+    const onPasteColor = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
+        const color = event.target.value;
+        //todo: validate string
+        //todo: detect string and conver it to hex
+        setColors( (colors)=> colors.map((el)=>{
+            if(el.role === role) el.hexVal = color;
+            return el;
+             // gen random hex
+            // detect name from hex code
+            // detect best id based on color
+            // detect role based on order
+        })
+        )
     }
 
-    const onChangeName = () => {
-        
+
+    const onChangeName = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
+        const newName = event.target.value;
+        if(newName.length > 10 || newName.length < 1) return;
+        setColors( (colors)=> colors.map((el)=>{
+                if(el.role === role) el.name = newName;
+                return el;
+            })
+            )
     }
 
-    const onChangeId = () => {
+    const ids = [50,100,200,300,400,500,600,700,800,900,950];
+    const onChangeId = (id :number, role: string) => {
+        if(!ids.includes(id)) return;
 
+        setColors( (colors)=> colors.map((el)=>{
+            if(el.role === role) el.id = id;
+            return el;
+        })
+        )
     }
 
     return (<aside className="bg-slate-50 h-full  w-[22rem]">
@@ -101,7 +158,7 @@ export default function Sidebar() {
         <div className="flex justify-between items-center mb-1">
             <h3 className="capitalize text-sm">{el.role}</h3>
     
-            <Button onClick={()=>removeColor(el)} variant="outline" size="icon" className="rounded-full bg-slate-50 shadow-none border-none h-6 w-6">
+            <Button onClick={()=>removeColor(el.role)} variant="outline" size="icon" className="rounded-full bg-slate-50 shadow-none border-none h-6 w-6">
                 <XIcon className="h-3 w-3"></XIcon>
             </Button>
         </div>
@@ -111,25 +168,25 @@ export default function Sidebar() {
                 
     
                     <div className="flex items-center justify-center w-28 h-6">
-                            <input type="color" id="color" name="color" className="w-0 h-0" 
-                            value={el.hexVal} onChange={onChangeColor}
+                            <input type="color" id={el.role} name="color" className="w-0 h-0" 
+                            value={el.hexVal} onChange={(val) => onChangeColor(val, el.role)}
                             />
                             <label 
-                            htmlFor="color" 
+                            htmlFor={el.role} 
                             className="inline-block cursor-pointer aspect-square me-1 my-1 h-5 rounded-full"
                             style={{ backgroundColor: el.hexVal }}
                             ></label>
 
                         
                             <Input type="text" 
-                            value={el.hexVal} onChange={onPasteColor}
+                            value={el.hexVal} onChange={(ev)=>onPasteColor(ev, el.role)}
                             placeholder="color" className="w-full h-6 text-xs px-1 ms-1
                             focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none" />
                         </div>
     
                         <div className="flex">
                         <div className="relative w-16 ">
-                        <Input type="text" placeholder="name" onChange={onChangeName} className="w-full bg-slate-100 border-none 
+                        <Input type="text" placeholder="name" onChange={(ev)=>onChangeName(ev, el.role)} className="w-full bg-slate-100 border-none 
                         shadow-none text-slate-700 font-medium text-[0.8rem] md:text-[0.8rem] text-center h-7 px-1"
                         value={el.name}
                         />
@@ -143,13 +200,8 @@ export default function Sidebar() {
                                 {el.id}
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={onChangeId}>Profile</DropdownMenuItem>
-                            <DropdownMenuItem onClick={onChangeId}>Billing</DropdownMenuItem>
-                            <DropdownMenuItem onClick={onChangeId}>Team</DropdownMenuItem>
-                            <DropdownMenuItem onClick={onChangeId}>Subscription</DropdownMenuItem>
+                        <DropdownMenuContent className="flex py-2 flex-wrap gap-0.5 justify-center w-36">
+                            {ids.map(id=>(<DropdownMenuItem className={`${id == el.id ? "bg-slate-200" : "" } w-10 block text-center text-xs cursor-pointer`} key={el.role+id} onClick={()=>onChangeId(id, el.role)}>{id}</DropdownMenuItem>))}
                         </DropdownMenuContent>
                     </DropdownMenu>
                         </div>
