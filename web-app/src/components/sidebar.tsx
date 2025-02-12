@@ -150,7 +150,7 @@ export default function Sidebar() {
     
 
     const onChangeName = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
-        const newName = event.target.value.toLowerCase();
+        const newName = event.target.value.toLowerCase().replaceAll(" ", "-");
         if(newName.length > 10 || newName.length < 1) return;
         dispatch(changeColorName(newName, role));
     }
@@ -166,7 +166,7 @@ export default function Sidebar() {
     <CardHeader className="p-4">
         <CardTitle>TailShadescn CSS Shades Generator</CardTitle>
         <CardDescription>The best shades generator, as beautiful as the Tailwind shades, for any color, with an integrated ShadCN theme generator.</CardDescription>
-        <Button className="w-full">hello there</Button>
+        {/* <Button className="w-full">hello there</Button> */}
 
     </CardHeader>
     <CardContent className="p-0">
@@ -214,7 +214,7 @@ export default function Sidebar() {
                         </div>
     
                         <div className="flex">
-                        <div className="relative w-16 ">
+                        <div className="relative w-24 ">
                         <Input type="text" placeholder="name" onChange={(ev)=>onChangeName(ev, el.role)} className="w-full bg-slate-100 border-none 
                         shadow-none text-slate-700 font-medium text-[0.8rem] md:text-[0.8rem] text-center h-7 px-1"
                         value={el.name}
@@ -227,7 +227,7 @@ export default function Sidebar() {
     
                         <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="text-xs border-none shadow-none h-7 w-16 bg-slate-100 text-slate-700" >
+                            <Button variant="outline" className="text-xs border-none shadow-none h-7 w-12 bg-slate-100 text-slate-700" >
                                 {el.shadeId}
                             </Button>
                         </DropdownMenuTrigger>

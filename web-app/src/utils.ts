@@ -1,4 +1,5 @@
 import { colorNames } from "./data/colors";
+import { tailwindColors } from "./data/tailwind-colors";
 import { Color, roles } from "./types";
 
 
@@ -113,8 +114,25 @@ export const getRandomColor = () => {
 }
 
 export const getShadeIdOfColor = (color : string) => {
-    return 400;
-}
+    const rgb = hexToRgb(color);
+    let closestShadeId = "";
+    let minDistance = Infinity;
+
+    Object.keys(tailwindColors).forEach((name) => {
+    Object.keys(tailwindColors[name]).forEach((shadeId) => {
+        const hex = tailwindColors[name][shadeId];
+        const shadeRgb = hexToRgb(hex); 
+        const distance = calculateColorDistance(rgb, shadeRgb);
+
+        if (distance < minDistance) {
+        minDistance = distance;
+        closestShadeId = shadeId;
+        }
+    });
+    });
+
+    return parseInt(closestShadeId);
+};
 
 const calculateColorDistance = (rgb1 : number[], rgb2: number[]) => {
     const [r1, g1, b1] = rgb1;
@@ -127,7 +145,6 @@ export const getNameOfColor = (color : string) => {
     
     let closestColor = "";
     let minDistance = Infinity;
-    alert(Math.max(...(colorNames.map(el=>el.name.length))))
     colorNames.forEach((el) => {
         const distance = calculateColorDistance(rgb, el.rgb);
         if (distance < minDistance) {
@@ -135,7 +152,8 @@ export const getNameOfColor = (color : string) => {
             closestColor = el.name;
         }
     });
-    // formulate color to make it smaller
+    //todo: abbrevitae in a good way formulate color to make it smaller
+    //ex: persian-indigo ==> p-indigo as id
     return closestColor;
 };
 
