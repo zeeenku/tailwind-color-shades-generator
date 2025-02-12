@@ -26,7 +26,7 @@ import {
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { shadeIds } from "@/types";
-import { rgbToHex, hslToHex, isValidHex } from "@/utils";
+import { rgbToHex, hslToHex, isValidHex, cleanColorString, isValidHsl, isValidRgb } from "@/utils";
 
 
 type Color = {
@@ -50,7 +50,7 @@ export default function Sidebar() {
         const newColorStringInputs = colors.reduce((acc, el) => {
             acc[el.role] = el.hexVal;
             return acc;
-        }, {});console.log("ttt")
+        }, {});
         setColorStringInputs(newColorStringInputs);
     };
 
@@ -79,7 +79,7 @@ export default function Sidebar() {
          * detectable cases
          * has a #
          * rgb:
-         * rgb()
+         * 
          * 171, 118, 115
          * rgb(255, 0, 0)
          * hsl:
@@ -104,28 +104,31 @@ export default function Sidebar() {
             return;
         }     
 
-        const colorParts = colorString
-            .trim()
-            .replace(/[^\d,°%]/g, "")  // Remove invalid characters
-            .replace(/rgb\(|hsl\(|\)/g, "")  // Remove rgb() or hsl()
-            .split(/\s*,\s*|\s+/); // Split by comma or spaces
 
 
-        if (colorParts.length === 3 && colorParts.every(part => part.match(/^\d+$/))) {
+        // Clean the input string and split into parts
+        const colorParts = cleanColorString(colorString);
+
+        console.log(colorParts)
+
+        // Handle HSL format: 'h,s,l' or 'hsl(h, s%, l%)'
+        if (colorParts.length === 3 && isValidHsl(colorParts)) {
+            console.log("ggg")
+            const h = parseInt(colorParts[0].replace("°", ""));
+            const s = parseInt(colorParts[1].replace("%", ""));
+            const l = parseInt(colorParts[2].replace("%", ""));
+            dispatch(updateColor( hslToHex(h, s, l), role));
+        }
+
+        // Handle RGB format: 'r,g,b' or 'rgb(r, g, b)'
+        else if (colorParts.length === 3 && isValidRgb(colorParts)) {
             const r = parseInt(colorParts[0]);
             const g = parseInt(colorParts[1]);
             const b = parseInt(colorParts[2]);
-            dispatch(updateColor(rgbToHex(r, g, b), role));
+            dispatch(updateColor( rgbToHex(r, g, b), role));
 
         }
 
-        if (colorParts.length === 3 && colorParts.every(part => part.match(/^\d+(\.\d+)?%?$/))) {
-            const h = parseInt(colorParts[0]);
-            const s = parseInt(colorParts[1].replace("%", ""));
-            const l = parseInt(colorParts[2].replace("%", ""));
-            dispatch(updateColor(hslToHex(h, s, l), role));
-
-        }
 
 
     };

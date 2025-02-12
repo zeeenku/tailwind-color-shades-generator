@@ -43,17 +43,18 @@ export const isValidHsl = (hslParts: string[]) => {
     !isNaN(h) &&
     !isNaN(s) &&
     !isNaN(l) &&
+    h>= 0 && h<= 360 &&
     s >= 0 && s <= 100 &&
     l >= 0 && l <= 100
     );
 };
 
-const rgbToHex = (r: number, g: number, b: number) => {
+export const rgbToHex = (r: number, g: number, b: number) => {
     return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toUpperCase()}`;
 };
 
 // HSL to HEX conversion helper
-const hslToHex = (h: number, s: number, l: number) => {
+export const hslToHex = (h: number, s: number, l: number) => {
     s /= 100;
     l /= 100;
 
