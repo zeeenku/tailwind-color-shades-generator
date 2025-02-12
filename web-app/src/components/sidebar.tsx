@@ -38,55 +38,67 @@ type Color = {
 
 export default function Sidebar() {
 
+    /**
+     * the main functionnality component
+     */
+
+
+    // global state components
     const dispatch = useDispatch();
-
-
     const colors = useSelector((state : StateType) => state.colors);
 
-    const csi : { [key:string]: string} = {}; 
-    const [colorStringInputs, setColorStringInputs] = useState(csi)
 
-    
-    const reinitColorStrings = () => {
-        const newColorStringInputs = colors.reduce((acc, el) => {
-            acc[el.role] = el.hexVal;
-            return acc;
-        }, {});
-        setColorStringInputs(newColorStringInputs);
-    };
+    // separate the color string values from the global state
+    // make it more effecient for color detection of multiple formats, and in case of bad format
+    // return it to previous state value
+    type ColorStringInputs = { [key: string]: string };
+    const [colorStringInputs, setColorStringInputs] = useState<ColorStringInputs>({});
 
-    //for first initial random primary color
+
+    //initialise first random color here
+    //to solve hydration error
     useEffect(()=>{
         dispatch(addColor());
     },[])
 
-    useEffect(()=>{
-        reinitColorStrings();
-    },[colors])
-    
+    const addNewColor = async () => {
+        await dispatch(addColor());
+    }
 
 
     const onRemoveColor = (role : string) => {  
         dispatch(removeColor(role));
-        // hex colors data changes
     }
 
-    const addNewColor = async () => {
-        await dispatch(addColor());
-        // hex colors data changes
-    }
 
+    // changes from color picker
     const onChangeColor = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
         dispatch(updateColor(event.target.value, role));
-        // hex colors data changes
+    }
+
+
+    //? maybe make the feature of name and also name Id....
+    const onChangeName = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
+        // validate name
+        const newName = event.target.value.toLowerCase().replaceAll(" ", "-");
+        if(newName.length > 10 || newName.length < 1) return;
+        dispatch(changeColorName(newName, role));
+    }
+
+
+    const onChangeShadeId = (shadeId :number, role: string) => {
+        if(!shadeIds.includes(shadeId)) return;
+        dispatch(changeColorShadeId(shadeId, role));
     }
 
 
 
+    
 
     const onChangeColorStringInput = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
 
         /**
+         * ? maybe make it as info somewhere
          * detectable cases
          * has a #
          * rgb:
@@ -99,10 +111,12 @@ export default function Sidebar() {
          * 4°, 25%, 56%
          * 4, 25%, 56%
          */
-        const colorString = event.target.value;
-        if(colorString.length < 1) return;
 
-        const newColorStringInputs = colors.reduce((acc, el) => {
+        // validate the color string
+        const colorString = event.target.value;
+
+        // update the color string inputs
+        const newColorStringInputs = colors.reduce((acc : ColorStringInputs, el) => {
             if(role == el.role){
                 acc[el.role] = colorString;
             }
@@ -110,63 +124,60 @@ export default function Sidebar() {
         }, {});
         setColorStringInputs(newColorStringInputs);
 
+
+        // if string is valid hex change state directly
         if(isValidHex(colorString)){
             dispatch(updateColor(colorString, role));
             return;
         }     
 
 
-
-        // Clean the input string and split into parts
+        // clean the input string and split into 3 parts (for hsl & rbg)
         const colorParts = cleanColorString(colorString);
 
-        console.log(colorParts)
-
-
-        // Handle HSL format: 'h,s,l' or 'hsl(h, s%, l%)'
         if (colorParts.length === 3 && isValidHsl(colorParts)) {
-            console.log("ggg")
             const h = parseInt(colorParts[0].replace("°", ""));
             const s = parseInt(colorParts[1].replace("%", ""));
             const l = parseInt(colorParts[2].replace("%", ""));
             dispatch(updateColor( hslToHex(h, s, l), role));
         }
-        // Handle RGB format: 'r,g,b' or 'rgb(r, g, b)'
+
         else if (colorParts.length === 3 && isValidRgb(colorParts)) {
             const r = parseInt(colorParts[0]);
             const g = parseInt(colorParts[1]);
             const b = parseInt(colorParts[2]);
             dispatch(updateColor( rgbToHex(r, g, b), role));
-
         }
-
-
-
-
 
     };
 
 
+
+
+    // make color string inputs equal to state color hex values
+    const reinitColorStrings = () => {
+        const newColorStringInputs = colors.reduce((acc : ColorStringInputs , el) => {
+            acc[el.role] = el.hexVal;
+            return acc;
+        }, {});
+        setColorStringInputs(newColorStringInputs);
+    };
+
+
+    useEffect(()=>{
+        reinitColorStrings();
+    },[colors]);
+
+
+
     
 
-    const onChangeName = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
-        const newName = event.target.value.toLowerCase().replaceAll(" ", "-");
-        if(newName.length > 10 || newName.length < 1) return;
-        dispatch(changeColorName(newName, role));
-    }
-
-
-    const onChangeShadeId = (shadeId :number, role: string) => {
-        if(!shadeIds.includes(shadeId)) return;
-        dispatch(changeColorShadeId(shadeId, role));
-    }
 
     return (<aside className="bg-slate-50 h-full  w-[22rem]">
     <Card className="h-full max-h-full p-0 pb-14 overflow-y-auto rounded-none bg-slate-50">
     <CardHeader className="p-4">
-        <CardTitle>TailShadescn CSS Shades Generator</CardTitle>
+        <CardTitle className="text-md">TailShadescn CSS Shades Generator</CardTitle>
         <CardDescription>The best shades generator, as beautiful as the Tailwind shades, for any color, with an integrated ShadCN theme generator.</CardDescription>
-        {/* <Button className="w-full">hello there</Button> */}
 
     </CardHeader>
     <CardContent className="p-0">
@@ -249,11 +260,11 @@ export default function Sidebar() {
 
 
             <div className="p-4">
-                <Button onClick={addNewColor} className="w-full my-2">Add new color</Button>
+                <Button onClick={addNewColor} size="lg" className="w-full my-1">Add new color</Button>
             </div>
     </CardContent>
     <CardFooter className="p-4">
-        <Alert>
+        <Alert className="mt-3 mb-1">
             <Terminal className="h-4 w-4" />
             <AlertTitle>Heads up!</AlertTitle>
             <AlertDescription>
