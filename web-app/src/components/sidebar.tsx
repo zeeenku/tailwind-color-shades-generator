@@ -39,17 +39,14 @@ type Color = {
 export default function Sidebar() {
 
     const dispatch = useDispatch();
-    useEffect(()=>{
-        dispatch(addColor())
-    },[])
 
-    //for first initial random primary color
 
     const colors = useSelector((state : StateType) => state.colors);
 
     const csi : { [key:string]: string} = {}; 
     const [colorStringInputs, setColorStringInputs] = useState(csi)
 
+    
     const reinitColorStrings = () => {
         const newColorStringInputs = colors.reduce((acc, el) => {
             acc[el.role] = el.hexVal;
@@ -58,20 +55,30 @@ export default function Sidebar() {
         setColorStringInputs(newColorStringInputs);
     };
 
-    useEffect(() => {
+    //for first initial random primary color
+    useEffect(()=>{
+        dispatch(addColor());
+    },[])
+
+    useEffect(()=>{
         reinitColorStrings();
-    }, [colors]);
+    },[colors])
+    
+
 
     const onRemoveColor = (role : string) => {  
-        dispatch(removeColor(role))
+        dispatch(removeColor(role));
+        // hex colors data changes
     }
 
-    const addNewColor = () => {
-        dispatch(addColor())
+    const addNewColor = async () => {
+        await dispatch(addColor());
+        // hex colors data changes
     }
 
     const onChangeColor = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
-        dispatch(updateColor(event.target.value, role))
+        dispatch(updateColor(event.target.value, role));
+        // hex colors data changes
     }
 
 

@@ -1,3 +1,4 @@
+import { colorNames } from "./data/colors";
 import { Color, roles } from "./types";
 
 
@@ -57,8 +58,24 @@ export const isValidHsl = (hslParts: string[]) => {
 };
 
 export const rgbToHex = (r: number, g: number, b: number) => {
-    return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toUpperCase()}`;
+    return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toLowerCase()}`;
 };
+
+export const hexToRgb = (hex : string) => {
+
+    hex = hex.replace(/^#/, '');
+
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+
+    return [r,g,b];
+}
+
+// Example usage
+const hexColor = "#3498db"; // A blue color
+const rgbColor = hexToRgb(hexColor);
+console.log(rgbColor); // Output: rgb(52, 152, 219)
 
 // HSL to HEX conversion helper
 export const hslToHex = (h: number, s: number, l: number) => {
@@ -99,9 +116,28 @@ export const getShadeIdOfColor = (color : string) => {
     return 400;
 }
 
+const calculateColorDistance = (rgb1 : number[], rgb2: number[]) => {
+    const [r1, g1, b1] = rgb1;
+    const [r2, g2, b2] = rgb2;
+    return Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2));
+};
+
 export const getNameOfColor = (color : string) => {
-    return "red";
-}
+    const rgb = hexToRgb(color);
+    
+    let closestColor = "";
+    let minDistance = Infinity;
+    alert(Math.max(...(colorNames.map(el=>el.name.length))))
+    colorNames.forEach((el) => {
+        const distance = calculateColorDistance(rgb, el.rgb);
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestColor = el.name;
+        }
+    });
+    // formulate color to make it smaller
+    return closestColor;
+};
 
 
 
