@@ -113,6 +113,28 @@ export const getRandomColor = () => {
     return color;
 }
 
+
+
+
+
+const getNameId = (name : string)=>{
+
+    name = name.trim().toLowerCase();
+    if(!name.includes(" ")) return name;
+
+    const parts = name.split(" ");
+    const len = parts.length;
+    const chunkLen = len == 2 ? 3 : 2;
+    let result = parts[len-1];
+    for(let i = len - 2;i >= 0; i--){
+        result = parts[i].slice(0,chunkLen) + "-" +result;
+    }
+
+    return result;
+}
+
+
+
 export const getShadeIdOfColor = (color : string) => {
     const rgb = hexToRgb(color);
     let closestShadeId = "";
@@ -154,7 +176,7 @@ export const getNameOfColor = (color : string) => {
     });
     //todo: abbrevitae in a good way formulate color to make it smaller
     //ex: persian-indigo ==> p-indigo as id
-    return closestColor;
+    return closestColor.replaceAll("-"," ");
 };
 
 
@@ -174,10 +196,12 @@ export const getNewRandomColorData = (colorIndex : number) => {
         
     const hex = getRandomColor();
     const shadeId = getShadeIdOfColor(hex);
+    const name = getNameOfColor(hex).toLowerCase();
     const newColor : Color = {
         hexVal: hex,
-        name: getNameOfColor(hex),
+        name: name,
         shadeId:shadeId, 
+        nameId: getNameId(name),
         role: roles[colorIndex],
         allShades : getShadesOfColor(hex,shadeId)
     };
@@ -185,15 +209,13 @@ export const getNewRandomColorData = (colorIndex : number) => {
 }
 
 
-
-
-
-
 export const updateColorData = (newColorHex: string, color: Color) => {
     const shadeId = getShadeIdOfColor(newColorHex);
+    const name = getNameOfColor(newColorHex).toLowerCase();
     color = {
         hexVal: newColorHex,
-        name: getNameOfColor(newColorHex),
+        name: name,
+        nameId: getNameId(name),
         shadeId:shadeId, 
         role: color.role,
         allShades : getShadesOfColor(newColorHex,shadeId)

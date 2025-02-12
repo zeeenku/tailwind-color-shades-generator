@@ -1,6 +1,7 @@
 export type Color = {
     hexVal : string,
     name : string,
+    nameId : string,
     shadeId : number,
     role : string,
     allShades : { [key: string]: string } 

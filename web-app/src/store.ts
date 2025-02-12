@@ -17,7 +17,7 @@ const initialState: StateType = {
 export enum Actions{
     ADDCOLOR = "ADDCOLOR",
     REMOVECOLOR = "REMOVECOLOR",
-    CHANGECOLORNAME = "CHANGECOLORNAME",
+    CHANGECOLORNAMEID = "CHANGECOLORNAMEID",
     CHANGECOLORSHADEID = "CHANGECOLORSHADEID",
     UPDATEROLE = "UPDATEROLE",
     UPDATECOLOR = "UPDATECOLOR",
@@ -82,7 +82,7 @@ export const updateColor = (colorHex: string, role: string) => {
 
 
 
-export const changeColorName = (name: string, role: string) => {
+export const changeColorNameId = (nameId: string, role: string) => {
     return (dispatch: any, getState: any) => {
         const state = getState();
         
@@ -90,11 +90,11 @@ export const changeColorName = (name: string, role: string) => {
             .map((el: Color) => {
                 if(el.role !== role) return el;
 
-                return { ...el, name }; 
+                return { ...el, nameId }; 
             });
 
         dispatch({
-            type: Actions.CHANGECOLORNAME,
+            type: Actions.CHANGECOLORNAMEID,
             payload: newColors,
         });
     };
@@ -142,7 +142,7 @@ const reducer = (state = initialState, action: { type: string; payload: any }) =
                 colors: action.payload, 
             };
 
-        case Actions.CHANGECOLORNAME:
+        case Actions.CHANGECOLORNAMEID:
             return {
                 ...state,
                 colors: action.payload, 

@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "@/components/ui/input"
 import {Trash2 as Trash2Icon, Terminal} from "lucide-react";
-import { addColor, changeColorName, changeColorShadeId, removeColor, StateType, updateColor } from '@/store'; 
+import { addColor, changeColorName, changeColorNameId, changeColorShadeId, removeColor, StateType, updateColor } from '@/store'; 
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -78,11 +78,11 @@ export default function Sidebar() {
 
 
     //? maybe make the feature of name and also name Id....
-    const onChangeName = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
+    const onChangeNameId = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
         // validate name
-        const newName = event.target.value.toLowerCase().replaceAll(" ", "-");
-        if(newName.length > 10 || newName.length < 1) return;
-        dispatch(changeColorName(newName, role));
+        const newNameId = event.target.value.toLowerCase().replaceAll(" ", "-");
+        if(newNameId.length > 15 || newNameId.length < 1) return;
+        dispatch(changeColorNameId(newNameId, role));
     }
 
 
@@ -226,9 +226,9 @@ export default function Sidebar() {
     
                         <div className="flex">
                         <div className="relative w-24 ">
-                        <Input type="text" placeholder="name" onChange={(ev)=>onChangeName(ev, el.role)} className="w-full bg-slate-100 border-none 
+                        <Input type="text" placeholder="name" onChange={(ev)=>onChangeNameId(ev, el.role)} className="w-full bg-slate-100 border-none 
                         shadow-none text-slate-700 font-medium text-[0.8rem] md:text-[0.8rem] text-center h-7 px-1"
-                        value={el.name}
+                        value={el.nameId}
                         />
 
                         
