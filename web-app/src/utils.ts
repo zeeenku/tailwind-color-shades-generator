@@ -28,6 +28,12 @@ export const getShadesOfColor = (color : string, shadeId: number) => {
 
 
 export const getNewRandomColorData = (colorIndex : number) => {
+
+            // gen random hex
+            // detect name from hex code
+            // detect best id based on color
+            // detect role based on order
+        
     const hex = getRandomColor();
     const shadeId = getShadeIdOfColor(hex);
     const newColor : Color = {
@@ -38,5 +44,22 @@ export const getNewRandomColorData = (colorIndex : number) => {
         allShades : getShadesOfColor(hex,shadeId)
     };
     return newColor;
+}
+
+
+
+
+
+
+export const updateColorData = (newColorHex: string, color: Color) => {
+    const shadeId = getShadeIdOfColor(newColorHex);
+    color = {
+        hexVal: newColorHex,
+        name: getNameOfColor(newColorHex),
+        shadeId:shadeId, 
+        role: color.role,
+        allShades : getShadesOfColor(newColorHex,shadeId)
+    };
+    return color;
 }
 

@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "@/components/ui/input"
 import {Trash2 as Trash2Icon, Terminal} from "lucide-react";
-import { addColor, StateType } from '@/store'; 
+import { addColor, changeColorName, removeColor, StateType, updateColor } from '@/store'; 
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -39,67 +39,26 @@ export default function Sidebar() {
 
     const dispatch = useDispatch();
 
-    const cs : Color[] = [
-        {
-            hexVal : "#84cc16",
-            name : "lime",
-            id : 500,
-            role : "primary"
-        },
-        {
-            hexVal : "#4f46e5",
-            name : "indigo",
-            id : 600,
-            role : "secondary"
-        },
-    ];
-
 
     const colors = useSelector((state : StateType) => state.colors);
 
 
-    // must be better just prototype
-    // const getRoleByIndex = (index:number) => {
-    //     return `${index}nth`;
-    // }
 
 
-    const removeColor = (role : string) => {
-
-        // if(colors.length < 2) return;
-
-        // setColors( (colors)=> colors.filter((el)=>(el.role !== role)).map((el,index)=>{
-        //     // rearanging roles
-        //     el.role = getRoleByIndex(index);
-        //     return el;
-        // })
-        // )
-
+    const onRemoveColor = (role : string) => {  
+        dispatch(removeColor(role))
     }
 
     const addNewColor = () => {
-
-        // gen random hex
-        // detect name from hex code
-        // detect best id based on color
-        // detect role based on order
-    
         dispatch(addColor())
     }
 
     const onChangeColor = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
-        // setColors( (colors)=> colors.map((el)=>{
-        //         if(el.role === role) el.hexVal = event.target.value;
-        //         return el;
-        //          // gen random hex
-        //         // detect name from hex code
-        //         // detect best id based on color
-        //         // detect role based on order
-        //     })
-        //     )
+        dispatch(updateColor(event.target.value, role))
     }
 
     const onPasteColor = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
+        // give it the hex.....
         // const color = event.target.value;
         // //todo: validate string
         // //todo: detect string and conver it to hex
@@ -116,13 +75,9 @@ export default function Sidebar() {
 
 
     const onChangeName = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
-        // const newName = event.target.value;
-        // if(newName.length > 10 || newName.length < 1) return;
-        // setColors( (colors)=> colors.map((el)=>{
-        //         if(el.role === role) el.name = newName;
-        //         return el;
-        //     })
-        //     )
+        const newName = event.target.value.toLowerCase();
+        if(newName.length > 10 || newName.length < 1) return;
+        dispatch(changeColorName(newName, role));
     }
 
     // 
@@ -155,9 +110,10 @@ export default function Sidebar() {
         <div className="flex justify-between items-center mb-1">
             <h3 className="capitalize text-sm">{el.role}</h3>
     
-            <Button onClick={()=>removeColor(el.role)} variant="outline" size="icon" className="rounded-full bg-slate-50 shadow-none border-none h-6 w-6">
+
+            {colors.length > 1 && <Button onClick={()=>onRemoveColor(el.role)} variant="outline" size="icon" className="rounded-full bg-slate-50 shadow-none border-none h-6 w-6">
                 <Trash2Icon className="h-3 w-3 text-slate-600"></Trash2Icon>
-            </Button>
+            </Button>}
         </div>
         <Card >
                 <CardContent className="p-3">
