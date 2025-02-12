@@ -18,12 +18,18 @@ export const isValidHex = (color : string) => {
 
 
 export const cleanColorString = (colorString: string) => {
-    return colorString
-      .trim()
-      .replace(/[^\d,°%]/g, "") // Remove invalid characters
-      .replace(/rgb\(|hsl\(|\)/g, "") // Remove rgb() or hsl()
-      .split(/\s*,\s*|\s+/); // Split by commas or spaces
-  };
+    colorString = colorString.trim();
+
+    colorString = colorString
+    .replace(/rgb\(|hsl\(|\)/g, "")
+    .replace(/\s+/g, ","); 
+
+    if (colorString.includes(",")) {
+    return colorString.split(",").map(el => el.trim()).filter(el=>el.length);
+    } else {
+    return colorString.split(/\s+/).map(el => el.trim()).filter(el=>el.length);
+    }
+};
 
 export const isValidRgb = (rgbParts: string[]) => {
     if (rgbParts.length !== 3) return false;
@@ -36,6 +42,7 @@ export const isValidRgb = (rgbParts: string[]) => {
 // Function to check if HSL values are valid
 export const isValidHsl = (hslParts: string[]) => {
     if (hslParts.length !== 3) return false;
+    if(!hslParts[1].includes("%") || !hslParts[2].includes("%")) return false;
     const h = parseInt(hslParts[0].replace("°", ""));
     const s = parseInt(hslParts[1].replace("%", ""));
     const l = parseInt(hslParts[2].replace("%", ""));

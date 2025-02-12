@@ -84,7 +84,7 @@ export default function Sidebar() {
          * rgb(255, 0, 0)
          * hsl:
          * hsl(0, 100%, 50%)
-         * 262 5% 0%;
+         * 0 62% 55%
          * 4°, 25%, 56%
          * 4, 25%, 56%
          */
@@ -111,6 +111,7 @@ export default function Sidebar() {
 
         console.log(colorParts)
 
+
         // Handle HSL format: 'h,s,l' or 'hsl(h, s%, l%)'
         if (colorParts.length === 3 && isValidHsl(colorParts)) {
             console.log("ggg")
@@ -119,7 +120,6 @@ export default function Sidebar() {
             const l = parseInt(colorParts[2].replace("%", ""));
             dispatch(updateColor( hslToHex(h, s, l), role));
         }
-
         // Handle RGB format: 'r,g,b' or 'rgb(r, g, b)'
         else if (colorParts.length === 3 && isValidRgb(colorParts)) {
             const r = parseInt(colorParts[0]);
@@ -128,6 +128,8 @@ export default function Sidebar() {
             dispatch(updateColor( rgbToHex(r, g, b), role));
 
         }
+
+
 
 
 
