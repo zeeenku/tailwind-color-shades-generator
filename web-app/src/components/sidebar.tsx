@@ -39,7 +39,11 @@ type Color = {
 export default function Sidebar() {
 
     const dispatch = useDispatch();
+    useEffect(()=>{
+        dispatch(addColor())
+    },[])
 
+    //for first initial random primary color
 
     const colors = useSelector((state : StateType) => state.colors);
 
@@ -190,11 +194,16 @@ export default function Sidebar() {
                             ></label>
 
                         
-                            <Input type="text" 
+                            <Input
+                            type="text"
                             onBlur={reinitColorStrings}
-                            value={colorStringInputs[el.role]} onChange={(ev)=>onChangeColorStringInput(ev, el.role)}
-                            placeholder="color" className="w-full h-6 text-xs px-1 ms-1
-                            focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none" />
+                            value={colorStringInputs[el.role] || ""}
+                            onChange={(ev) => onChangeColorStringInput(ev, el.role)}
+                            placeholder="color"
+                            className="w-full h-6 text-xs px-1 ms-1 focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none"
+                            />
+
+                        
                         </div>
     
                         <div className="flex">
@@ -203,6 +212,8 @@ export default function Sidebar() {
                         shadow-none text-slate-700 font-medium text-[0.8rem] md:text-[0.8rem] text-center h-7 px-1"
                         value={el.name}
                         />
+
+                        
                         </div>
                         <span className="mx-1">-</span>
     

@@ -10,7 +10,6 @@ export type StateType = {
 
 const initialState: StateType = {
     colors: [
-        getNewRandomColorData(0)
     ],
 };
 

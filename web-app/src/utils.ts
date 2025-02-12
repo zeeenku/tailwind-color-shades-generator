@@ -100,7 +100,7 @@ export const getShadeIdOfColor = (color : string) => {
 }
 
 export const getNameOfColor = (color : string) => {
-    return "Red";
+    return "red";
 }
 
 

@@ -5,11 +5,14 @@ import ShadesPreview from "@/components/shades-preview";
 import Sidebar from "@/components/sidebar";
 import UiExamples from "@/components/ui-examples";
 
-import { Provider } from 'react-redux';
-import store from '@/store';
+import { Provider, useDispatch } from 'react-redux';
+import store, { addColor } from '@/store';
+
 
 
 export default function Home() {
+
+
   return (
     <Provider store={store}>
       <main className="max-h-screen h-screen">
