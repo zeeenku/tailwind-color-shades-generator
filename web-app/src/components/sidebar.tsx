@@ -12,7 +12,7 @@ import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "@/components/ui/input"
 import {Trash2 as Trash2Icon, Terminal} from "lucide-react";
-import { addColor, changeColorName, removeColor, StateType, updateColor } from '@/store'; 
+import { addColor, changeColorName, changeColorShadeId, removeColor, StateType, updateColor } from '@/store'; 
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
@@ -24,8 +24,9 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
-import { ChangeEvent, useState } from "react";
-import { shadesIds } from "@/types";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { shadeIds } from "@/types";
+import { rgbToHex, hslToHex, isValidHex } from "@/utils";
 
 
 type Color = {
@@ -42,8 +43,20 @@ export default function Sidebar() {
 
     const colors = useSelector((state : StateType) => state.colors);
 
+    const csi : { [key:string]: string} = {}; 
+    const [colorStringInputs, setColorStringInputs] = useState(csi)
 
+    const reinitColorStrings = () => {
+        const newColorStringInputs = colors.reduce((acc, el) => {
+            acc[el.role] = el.hexVal;
+            return acc;
+        }, {});console.log("ttt")
+        setColorStringInputs(newColorStringInputs);
+    };
 
+    useEffect(() => {
+        reinitColorStrings();
+    }, [colors]);
 
     const onRemoveColor = (role : string) => {  
         dispatch(removeColor(role))
@@ -57,22 +70,68 @@ export default function Sidebar() {
         dispatch(updateColor(event.target.value, role))
     }
 
-    const onPasteColor = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
-        // give it the hex.....
-        // const color = event.target.value;
-        // //todo: validate string
-        // //todo: detect string and conver it to hex
-        // setColors( (colors)=> colors.map((el)=>{
-        //     if(el.role === role) el.hexVal = color;
-        //     return el;
-        //      // gen random hex
-        //     // detect name from hex code
-        //     // detect best id based on color
-        //     // detect role based on order
-        // })
-        // )
-    }
 
+
+
+    const onChangeColorStringInput = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
+
+        /**
+         * detectable cases
+         * has a #
+         * rgb:
+         * rgb()
+         * 171, 118, 115
+         * rgb(255, 0, 0)
+         * hsl:
+         * hsl(0, 100%, 50%)
+         * 262 5% 0%;
+         * 4°, 25%, 56%
+         * 4, 25%, 56%
+         */
+        const colorString = event.target.value;
+        if(colorString.length < 1) return;
+
+        const newColorStringInputs = colors.reduce((acc, el) => {
+            if(role == el.role){
+                acc[el.role] = colorString;
+            }
+            return acc;
+        }, {});
+        setColorStringInputs(newColorStringInputs);
+
+        if(isValidHex(colorString)){
+            dispatch(updateColor(colorString, role));
+            return;
+        }     
+
+        const colorParts = colorString
+            .trim()
+            .replace(/[^\d,°%]/g, "")  // Remove invalid characters
+            .replace(/rgb\(|hsl\(|\)/g, "")  // Remove rgb() or hsl()
+            .split(/\s*,\s*|\s+/); // Split by comma or spaces
+
+
+        if (colorParts.length === 3 && colorParts.every(part => part.match(/^\d+$/))) {
+            const r = parseInt(colorParts[0]);
+            const g = parseInt(colorParts[1]);
+            const b = parseInt(colorParts[2]);
+            dispatch(updateColor(rgbToHex(r, g, b), role));
+
+        }
+
+        if (colorParts.length === 3 && colorParts.every(part => part.match(/^\d+(\.\d+)?%?$/))) {
+            const h = parseInt(colorParts[0]);
+            const s = parseInt(colorParts[1].replace("%", ""));
+            const l = parseInt(colorParts[2].replace("%", ""));
+            dispatch(updateColor(hslToHex(h, s, l), role));
+
+        }
+
+
+    };
+
+
+    
 
     const onChangeName = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
         const newName = event.target.value.toLowerCase();
@@ -80,15 +139,10 @@ export default function Sidebar() {
         dispatch(changeColorName(newName, role));
     }
 
-    // 
-    const onChangeId = (id :number, role: string) => {
-    //     if(!ids.includes(id)) return;
 
-    //     setColors( (colors)=> colors.map((el)=>{
-    //         if(el.role === role) el.id = id;
-    //         return el;
-    //     })
-    //     )
+    const onChangeShadeId = (shadeId :number, role: string) => {
+        if(!shadeIds.includes(shadeId)) return;
+        dispatch(changeColorShadeId(shadeId, role));
     }
 
     return (<aside className="bg-slate-50 h-full  w-[22rem]">
@@ -132,7 +186,8 @@ export default function Sidebar() {
 
                         
                             <Input type="text" 
-                            value={el.hexVal} onChange={(ev)=>onPasteColor(ev, el.role)}
+                            onBlur={reinitColorStrings}
+                            value={colorStringInputs[el.role]} onChange={(ev)=>onChangeColorStringInput(ev, el.role)}
                             placeholder="color" className="w-full h-6 text-xs px-1 ms-1
                             focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none" />
                         </div>
@@ -154,7 +209,7 @@ export default function Sidebar() {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="flex py-2 flex-wrap gap-0.5 justify-center w-36">
-                            {shadesIds.map(id=>(<DropdownMenuItem className={`${id == el.shadeId ? "bg-slate-200" : "" } w-10 block text-center text-xs cursor-pointer`} key={el.role+id} onClick={()=>onChangeId(id, el.role)}>{id}</DropdownMenuItem>))}
+                            {shadeIds.map(id=>(<DropdownMenuItem className={`${id == el.shadeId ? "bg-slate-200" : "" } w-10 block text-center text-xs cursor-pointer`} key={el.role+id} onClick={()=>onChangeShadeId(id, el.role)}>{id}</DropdownMenuItem>))}
                         </DropdownMenuContent>
                     </DropdownMenu>
                         </div>

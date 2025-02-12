@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {Color, roles} from "@/types";
-import { getNewRandomColorData, updateColorData } from './utils';
+import { getNewRandomColorData, getShadesOfColor, updateColorData } from './utils';
 
 
 export type StateType = {
@@ -19,7 +19,7 @@ export enum Actions{
     ADDCOLOR = "ADDCOLOR",
     REMOVECOLOR = "REMOVECOLOR",
     CHANGECOLORNAME = "CHANGECOLORNAME",
-    UPDATESHADESID = "UPDATESHADESID",
+    CHANGECOLORSHADEID = "CHANGECOLORSHADEID",
     UPDATEROLE = "UPDATEROLE",
     UPDATECOLOR = "UPDATECOLOR",
 }
@@ -102,6 +102,27 @@ export const changeColorName = (name: string, role: string) => {
 };
 
 
+export const changeColorShadeId = (shadeId: number, role: string) => {
+    return (dispatch: any, getState: any) => {
+        const state = getState();
+        
+        const newColors = state.colors
+            .map((el: Color) => {
+                if(el.role !== role) return el;
+                const allShades = getShadesOfColor(el.hexVal, shadeId);
+                return { ...el, shadeId , allShades }; 
+            });
+
+        dispatch({
+            type: Actions.CHANGECOLORSHADEID,
+            payload: newColors,
+        });
+    };
+
+    
+};
+
+
 const reducer = (state = initialState, action: { type: string; payload: any }) => {
     switch (action.type) {
         case Actions.ADDCOLOR:
@@ -123,6 +144,13 @@ const reducer = (state = initialState, action: { type: string; payload: any }) =
             };
 
         case Actions.CHANGECOLORNAME:
+            return {
+                ...state,
+                colors: action.payload, 
+            };
+
+
+        case Actions.CHANGECOLORSHADEID:
             return {
                 ...state,
                 colors: action.payload, 
