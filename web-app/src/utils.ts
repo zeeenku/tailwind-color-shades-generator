@@ -59,11 +59,40 @@ export const isValidHsl = (hslParts: string[]) => {
     );
 };
 
+export const rgbToHsl = (r: number, g: number, b: number) => {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const hsl: number[] = [0, 0, (max + min) / 2];  // Initialize lightness
+    
+    const delta = max - min;
+    
+    if (delta === 0) {
+        hsl[0] = hsl[1] = 0;  // No hue or saturation if all values are the same
+    } else {
+        // Calculate saturation
+        hsl[1] = hsl[2] > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+        
+        // Calculate hue
+        switch (max) {
+            case r: hsl[0] = (g - b) / delta + (g < b ? 6 : 0); break;
+            case g: hsl[0] = (b - r) / delta + 2; break;
+            case b: hsl[0] = (r - g) / delta + 4; break;
+        }
+        
+        hsl[0] /= 6;
+    }
+
+    return [hsl[0] * 360, hsl[1] * 100, hsl[2] * 100];  // Return as [H, S, L] with percentages
+};
 export const rgbToHex = (r: number, g: number, b: number) => {
     return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toLowerCase()}`;
 };
 
-export const hexToRgb = (hex: string) => { 
+export const hexToRgb = (hex: string): [number, number, number] => { 
 
     hex = hex.replace(/^#/, '');
 
@@ -85,6 +114,27 @@ export const hexToRgb = (hex: string) => {
 }
 
 
+export const hslToRgb = (h: number, s: number, l: number) => {
+    s /= 100;
+    l /= 100;
+
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = l - c / 2;
+
+    let rgb: number[] = [0, 0, 0];
+
+    if (h < 60) rgb = [c, x, 0];
+    else if (h < 120) rgb = [x, c, 0];
+    else if (h < 180) rgb = [0, c, x];
+    else if (h < 240) rgb = [0, x, c];
+    else if (h < 300) rgb = [x, 0, c];
+    else rgb = [c, 0, x];
+
+    rgb = rgb.map((value) => Math.round((value + m) * 255));
+
+    return rgb;
+};
 
 // HSL to HEX conversion helper
 export const hslToHex = (h: number, s: number, l: number) => {

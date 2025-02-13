@@ -3,7 +3,6 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./ui/card";
 import { StateType } from "@/store";
 import { useToast } from "@/hooks/use-toast"
-import { getBestTextColor } from "@/utils";
 
 export default function ShadesPreview() {
 
@@ -16,7 +15,7 @@ export default function ShadesPreview() {
     }
 
     const notifyColorCopied = (name:string, hex:string, shadeId:string) =>{
-        notify("color copied successfully", `${name} ${shadeId}: ${hex}`)
+        notify("color copied successfully", `${name} ${shadeId} ${hex}`)
     }
 
     const copyColor = (name:string, hex:string, shadeId:string) => {
