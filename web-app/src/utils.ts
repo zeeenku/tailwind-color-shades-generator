@@ -62,21 +62,28 @@ export const rgbToHex = (r: number, g: number, b: number) => {
     return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toLowerCase()}`;
 };
 
-export const hexToRgb = (hex : string) => {
+export const hexToRgb = (hex: string) => { 
 
     hex = hex.replace(/^#/, '');
+
+    if (hex.length === 3) {
+        hex = hex.split('').map(char => char + char).join('');
+    }
+    else if (hex.length === 4) {
+        hex = hex.split('').map((char, index) => index % 2 === 0 ? char + char : char).join('');
+    }
+    else if (hex.length === 5) {
+        hex = hex.split('').map((char, index) => index % 2 === 0 ? char + char : char).join('');
+    }
 
     const r = parseInt(hex.substring(0, 2), 16);
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
 
-    return [r,g,b];
+    return [r, g, b];
 }
 
-// Example usage
-const hexColor = "#3498db"; // A blue color
-const rgbColor = hexToRgb(hexColor);
-console.log(rgbColor); // Output: rgb(52, 152, 219)
+
 
 // HSL to HEX conversion helper
 export const hslToHex = (h: number, s: number, l: number) => {
