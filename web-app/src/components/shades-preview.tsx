@@ -1,14 +1,23 @@
 import { useSelector } from "react-redux";
 import { Button } from "./ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./ui/card";
+import { Card, CardTitle, CardDescription, CardContent, CardFooter } from "./ui/card";
 import { StateType } from "@/store";
 import { useToast } from "@/hooks/use-toast"
 import { exportCss, exportScss, exportTailwind3 } from "@/lib/export-data";
+import { useEffect, useState } from "react";
 
 export default function ShadesPreview() {
 
     
     const colors = useSelector((state : StateType) => state.colors);
+    const [shadesGeneratedCounter, setShadesGeneratedCounter] = useState("0");
+
+    useEffect(()=>{
+        //todo: add http req to get ounter from backend
+        const res = (9845766).toString().split("").reverse().join("").match(/.{1,3}/g)!.reverse().join(",");
+        setShadesGeneratedCounter(res);
+    },[])
+
     const { toast } = useToast()
 
     const notify = (title:string, description:string) => {
@@ -83,7 +92,7 @@ return (
         <CardFooter className="px-4 justify-between items-end">
 
             <div className="flex flex-col justify-end">
-                <CardTitle className="text-[0.8rem] px-0.5 w-fit bg-slate-100">9,235,765</CardTitle>
+                <CardTitle className="text-[0.8rem] px-0.5 w-fit bg-slate-100">{shadesGeneratedCounter}</CardTitle>
                 <CardDescription className="w-32 text-xs">shades generated</CardDescription>
             </div>
             
