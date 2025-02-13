@@ -1,92 +1,75 @@
+import { hexToRgb, rgbToHex } from "@/utils";
+import { tailwindColors } from "./tailwind-colors";
+import { shadeIds } from "@/types";
 
+const cosine_sim = (rgb1: number[], rgb2: number[]): number => {
+    const dotProduct = rgb1[0] * rgb2[0] + rgb1[1] * rgb2[1] + rgb1[2] * rgb2[2];
+    const mag1 = Math.sqrt(rgb1[0] ** 2 + rgb1[1] ** 2 + rgb1[2] ** 2);
+    const mag2 = Math.sqrt(rgb2[0] ** 2 + rgb2[1] ** 2 + rgb2[2] ** 2);
+    return dotProduct / (mag1 * mag2);
+};
 
-import json
+export const getColorAllShades = (hexColor : string, hexColorShadeId : number) => {
+    const res : {[key:string] : string} = {};
+    shadeIds.forEach((el)=>{
+        res[el] = genOneColorShade(hexColor, hexColorShadeId, el);
+    })
 
-from similarity import hexToRgb, cosine_sim, magnitude, vectToColor
+    return res;
+}
+const genOneColorShade = (hexColor : string, hexColorShadeId : number, newColorShadeId : number) => {
 
+    const mags: { [key: string]: number[] } = {};
 
+    // Calculate the color distances
+    for (const key of Object.keys(tailwindColors)) {
+        mags[key] = [0, 0, 0];
+        const keyColor = tailwindColors[key][hexColorShadeId];
+        const wantedColor = tailwindColors[key][newColorShadeId];
 
-const genOneColorShade = (hexColor, hexColorShadeId, newColorShadeId) => {
+        // r distance
+        mags[key][0] = -hexToRgb(keyColor)[0] + hexToRgb(wantedColor)[0];
+        // g distance
+        mags[key][1] = -hexToRgb(keyColor)[1] + hexToRgb(wantedColor)[1];
+        // b distance
+        mags[key][2] = -hexToRgb(keyColor)[2] + hexToRgb(wantedColor)[2];
+    }
 
+    let maxSim = -Infinity;
+    for (const key of Object.keys(mags)) {
+        const keyColor = tailwindColors[key][hexColorShadeId];
+        const sim = cosine_sim(hexToRgb(hexColor), hexToRgb(keyColor));
+        maxSim = Math.max(maxSim, sim);
+    }
 
-    mags = {}
-    for key in colors.keys():
+    let medDistances = [0, 0, 0];  
+    let n = 0;
+
+    for (const key of Object.keys(mags)) {
+        const keyColor = tailwindColors[key][hexColorShadeId];
         
-        mags[key] = {}
-        key_color = colors[key][str(hexColorStopId)]
-        wanted_color = colors[key][str(colorWantedStopId)]
-
-        # r distance
-        mags[key][0] = -hexToRgb(key_color)[0] + hexToRgb(wanted_color)[0]
-        # g distance
-        mags[key][1] = -hexToRgb(key_color)[1] + hexToRgb(wanted_color)[1]
-        # b distance
-        mags[key][2] = -hexToRgb(key_color)[2] + hexToRgb(wanted_color)[2]
-
-    med_distances = [0,0,0]
-    n = 0
-    # max_sim = max(cosine_sim(hexToRgb(hexColor), colors[key][str(hexColorStopId)]) for key in mags.keys())
-
-    # for key in mags.keys():
-    #     key_color = colors[key][str(hexColorStopId)]
-    #     sim = cosine_sim(hexToRgb(hexColor), hexToRgb(key_color))
-    #     # give more importance to similar color
-    #     if max_sim == max_sim:
-    #         med_distances[0] += mags[key][0] * sim * 10
-    #         med_distances[1] += mags[key][1] * sim * 10
-    #         med_distances[2] += mags[key][2] * sim * 10
-    #         n += 10
-    #     else:
-    #         med_distances[0] += mags[key][0] * sim
-    #         med_distances[1] += mags[key][1] * sim
-    #         med_distances[2] += mags[key][2] * sim
-    #         n += 1
-
-    max_sim = max(
-    cosine_sim(hexToRgb(hexColor), hexToRgb(colors[key][str(hexColorStopId)])) 
-    for key in mags.keys()
-    )
-
-    # Initialize values to accumulate the weighted color distance
-    med_distances = [0, 0, 0]  # [r, g, b]
-    n = 0
-
-    # Iterate over each color and apply the weighted distance based on similarity
-    for key in mags.keys():
-        key_color = colors[key][str(hexColorStopId)]
+        const colorDistanceWeight = cosine_sim(hexToRgb(hexColor), hexToRgb(keyColor));
         
-        # Calculate similarity once and store it
-        color_distance_weight = cosine_sim(hexToRgb(hexColor), hexToRgb(key_color))
+        let weight = colorDistanceWeight === maxSim ? 25 : 1;
+
+        medDistances[0] += mags[key][0] * colorDistanceWeight * weight;
+        medDistances[1] += mags[key][1] * colorDistanceWeight * weight;
+        medDistances[2] += mags[key][2] * colorDistanceWeight * weight;
         
-        # If the color is the most similar (max similarity), give it more importance
-        if color_distance_weight == max_sim:
-            weight = 25
-        else:
-            weight = 1
-        
-        # Update the color distance values with weight adjustment
-        med_distances[0] += mags[key][0] * color_distance_weight * weight
-        med_distances[1] += mags[key][1] * color_distance_weight * weight
-        med_distances[2] += mags[key][2] * color_distance_weight * weight
-        
-        # Accumulate the total weight
-        n += weight
+        n += weight;
+    }
 
-    # Handle division by zero if there are no entries or if no weights were added
-    if n != 0:
-        dist = [distance / n for distance in med_distances]
-    else:
-        # If no valid calculations, set to default values
-        dist = [0, 0, 0]
+    let dist: number[];
+    if (n !== 0) {
+        dist = medDistances.map(distance => distance / n);
+    } else {
+        dist = [0, 0, 0];
+    }
 
+    let newResVect = hexToRgb(hexColor);
+    newResVect[0] = Math.max(0, Math.min(255, Math.round(newResVect[0] + dist[0])));
+    newResVect[1] = Math.max(0, Math.min(255, Math.round(newResVect[1] + dist[1])));
+    newResVect[2] = Math.max(0, Math.min(255, Math.round(newResVect[2] + dist[2])));
 
-    dist = [
-        med_distances[0]/n , med_distances[1]/n , med_distances[2]/n 
-    ]
-
-
-    new_res_vect = hexToRgb(hexColor)
-    new_res_vect[0] = max(0, min(255, int(new_res_vect[0] + dist[0])))
-    new_res_vect[1] = max(0, min(255, int(new_res_vect[1] + dist[1])))
-    new_res_vect[2] = max(0, min(255, int(new_res_vect[2] + dist[2])))
-    return vectToColor(new_res_vect)
+    return rgbToHex(newResVect[0],newResVect[1],newResVect[2]);
+};

@@ -1,4 +1,5 @@
 import { colorNames } from "./data/colors";
+import { getColorAllShades } from "./data/shades";
 import { tailwindColors } from "./data/tailwind-colors";
 import { Color, roles } from "./types";
 
@@ -189,7 +190,7 @@ export const getNameOfColor = (color : string) => {
 
 
 export const getShadesOfColor = (hexVal : string, shadeId: number) => {
-    return {};
+    return getColorAllShades(hexVal, shadeId);
 }
 
 

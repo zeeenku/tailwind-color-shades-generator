@@ -27,20 +27,23 @@ export default function ShadesPreview() {
             </div>
                 </div>
             <div className="grid mt-3 grid-cols-1 sm:grid-cols-11 gap-y-3 gap-x-2 sm:mt-2 2xl:mt-0">
-                <div className="relative flex">
-                    <div className="flex items-center gap-x-3 w-full cursor-pointer sm:block sm:space-y-1.5">
-                        <div className="h-10 w-10 rounded dark:ring-1 dark:ring-inset dark:ring-white/10 sm:w-full" style={{backgroundColor:"#000000"}}>
-                        </div>
-                        <div className="px-0.5">
-                            <div className="w-6 font-medium text-xs text-slate-900 2xl:w-full dark:text-white">
-                                50
+                {Object.keys(color.allShades).map((shadeId)=>(
+                    <div className="relative flex" key={color+shadeId}>
+                        <div className="flex items-center gap-x-3 w-full cursor-pointer sm:block sm:space-y-1.5">
+                            <div className="h-10 w-10 rounded dark:ring-1 dark:ring-inset dark:ring-white/10 sm:w-full" 
+                                style={{backgroundColor:color.allShades[shadeId]}}>
                             </div>
-                            <div className="text-slate-500 text-xs font-mono lowercase dark:text-slate-400 sm:text-[0.625rem] md:text-xs lg:text-[0.625rem] 2xl:text-xs">
-                                #eef2ff
+                            <div className="px-0.5">
+                                <div className="w-6 font-medium text-xs text-slate-900 2xl:w-full dark:text-white">
+                                    {shadeId}
+                                </div>
+                                <div className="text-slate-500 text-xs font-mono lowercase dark:text-slate-400 sm:text-[0.625rem] md:text-xs lg:text-[0.625rem] 2xl:text-xs">
+                                    {color.allShades[shadeId]}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                ))} 
             </div>
         </div>
         ))
