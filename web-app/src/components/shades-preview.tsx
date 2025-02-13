@@ -19,19 +19,15 @@ export default function ShadesPreview() {
         setShadesGeneratedCounter(res);
     },[])
 
-    const { toast } = useToast()
 
     const notify = (title:string, description:string) => {
+        const { toast } = useToast()
         toast({title,description})
-    }
-
-    const notifyColorCopied = (name:string, hex:string, shadeId:string) =>{
-        notify("color copied successfully", `${name} ${shadeId} ${hex}`)
     }
 
     const copyColor = (name:string, hex:string, shadeId:string) => {
         navigator.clipboard.writeText(hex)
-        notifyColorCopied(name,hex,shadeId)
+        notify("color copied successfully", `${name} ${shadeId} ${hex}`)
     }
 
 return (

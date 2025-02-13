@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { exportCss, exportScss, exportTailwind3, exportTailwind4 } from "@/lib/export-data";
 import { hexToHsl, hexToRgb } from "@/lib/color-formats";
+import { useToast } from "@/hooks/use-toast";
 
 
 type Props = {
@@ -26,7 +27,17 @@ const ExportDialog: React.FC<Props> = ({ type, data, children }) =>  {
     const exportOptions = ["tailwind 3", "tailwind 4", "css", "sass"]
     const [colorFormat, setColorFormat] = useState<string>(colorFormats[0]);
     const [codes, setCodes] = useState<{ [key: string]: string }>({});
-    
+    const { toast } = useToast()
+
+    const notify = (title:string, description:string) => {
+        toast({title,description})
+    }
+
+    const copy = (option : string) => {
+        navigator.clipboard.writeText(codes[option])
+        notify("code snippet copied successfully", ``)
+    }
+
         // Memoized export data so it doesn't re-calculate on every render
         const exportData = useMemo(() => {
         return data.map((el) => {
@@ -116,12 +127,23 @@ const ExportDialog: React.FC<Props> = ({ type, data, children }) =>  {
                             </div>
 
                             <div className="relative w-full bg-slate-900 rounded-md text-slate-50">
-                                <Button className="absolute right-6 top-3 h-6" variant="secondary" size="sm">copy</Button>
-
                                 <pre className="text-md max-h-[50vh] rounded-md overflow-y-auto">
-                                {exportOptions.map((el)=> 
-                                    <TabsContent key={el} value={el} className="p-6 my-0 rounded-md rounded-tr-none">{codes[el]}</TabsContent>
-                                )}
+                                {exportOptions.map((el) => (
+                                    <div key={el} className="">
+                                        <Button 
+                                        className="absolute right-7 top-3 h-6"
+                                        onClick={() => copy(el)} 
+                                        variant="secondary" 
+                                        size="sm"
+                                        >
+                                        copy
+                                        </Button>
+                                        <TabsContent value={el} className="p-6 my-0 rounded-md rounded-tr-none">
+                                        {codes[el]}
+                                        </TabsContent>
+                                    </div>
+                                ))}
+
                                 </pre>
 
                             </div>
