@@ -5,6 +5,7 @@ import { StateType } from "@/store";
 import { useToast } from "@/hooks/use-toast"
 import { exportCss, exportScss, exportTailwind3 } from "@/lib/export-data";
 import { useEffect, useState } from "react";
+import ExportDialog from "./export-dialog";
 
 export default function ShadesPreview() {
 
@@ -50,9 +51,13 @@ return (
 
                     <div className="flex items-center space-x-3 justify-end">
                         <Button variant="outline" className="border-none shadow-none p-0 text-xs text-slate-600 h-4 hover:bg-white ">share</Button>
-                        <Button variant="outline" 
-                        onClick={()=>alert(exportScss(color))}
-                        className="border-none shadow-none p-0 text-xs text-slate-600 h-4 hover:bg-white ">export</Button>
+                        <ExportDialog type="one" data={[color]} >
+                            <Button variant="outline" 
+                            className="border-none shadow-none p-0 text-xs text-slate-600 h-4 hover:bg-white ">
+                                export
+                            </Button>
+                        </ExportDialog>
+                        
                     </div>
 
                 </div>
@@ -99,7 +104,9 @@ return (
             <div className="flex space-x-2 items-end w-full justify-end">
                 <Button size="sm">UI Examples</Button>
                 <Button size="sm">Share all</Button>
-                <Button size="sm">Export all</Button>
+                <ExportDialog type="all" data={colors} >
+                    <Button size="sm">Export all</Button>
+                </ExportDialog>
             </div>
 
         </CardFooter>

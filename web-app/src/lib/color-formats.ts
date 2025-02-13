@@ -135,6 +135,11 @@ export const hslToRgb = (h: number, s: number, l: number) => {
 };
 
 
+export const hexToHsl = (hex : string)=>{
+    const [r,g,b] = hexToRgb(hex);
+    return rgbToHsl(r,g,b);
+}
+
 
 export const hslToHex = (h: number, s: number, l: number) => {
     s /= 100;

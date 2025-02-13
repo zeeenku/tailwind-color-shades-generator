@@ -72,6 +72,8 @@ export const updateColor = (colorHex: string, role: string) => {
                 return el;
             });
 
+        //todo: add feature to detect value of color after n seconds, if same then send http req to increment
+        //todo: shades generated counter
         dispatch({
             type: Actions.UPDATECOLOR,
             payload: newColors,
