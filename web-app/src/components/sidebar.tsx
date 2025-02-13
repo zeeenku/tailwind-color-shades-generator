@@ -140,6 +140,7 @@ export default function Sidebar() {
             const s = parseInt(colorParts[1].replace("%", ""));
             const l = parseInt(colorParts[2].replace("%", ""));
             dispatch(updateColor( hslToHex(h, s, l), role));
+            return;
         }
 
         else if (colorParts.length === 3 && isValidRgb(colorParts)) {
@@ -147,6 +148,7 @@ export default function Sidebar() {
             const g = parseInt(colorParts[1]);
             const b = parseInt(colorParts[2]);
             dispatch(updateColor( rgbToHex(r, g, b), role));
+            return;
         }
 
     };
@@ -173,7 +175,7 @@ export default function Sidebar() {
     
 
 
-    return (<aside className="bg-slate-50 h-full  w-[22rem]">
+    return (<aside className="bg-slate-50 h-full  w-[20rem]">
     <Card className="h-full max-h-full p-0 pb-14 overflow-y-auto rounded-none bg-slate-50">
     <CardHeader className="p-4">
         <CardTitle className="text-md">TailShadescn CSS Shades Generator</CardTitle>
@@ -197,11 +199,11 @@ export default function Sidebar() {
             </Button>}
         </div>
         <Card >
-                <CardContent className="p-3">
+                <CardContent className="p-2">
                     <div className="flex justify-between items-center">
                 
     
-                    <div className="flex items-center justify-center w-28 h-6">
+                    <div className="flex items-center justify-center w-[5.5rem] h-6">
                             <input type="color" id={el.role} name="color" className="w-0 h-0" 
                             value={el.hexVal} onChange={(val) => onChangeColor(val, el.role)}
                             />
@@ -218,7 +220,7 @@ export default function Sidebar() {
                             value={colorStringInputs[el.role] || ""}
                             onChange={(ev) => onChangeColorStringInput(ev, el.role)}
                             placeholder="color"
-                            className="w-full h-6 text-xs px-1 ms-1 focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none"
+                            className="w-full h-6 text-xs text-[0.75rem] md:text-[0.75rem] px-1 ms-1 focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none"
                             />
 
                         
@@ -227,7 +229,7 @@ export default function Sidebar() {
                         <div className="flex">
                         <div className="relative w-24 ">
                         <Input type="text" placeholder="name" onChange={(ev)=>onChangeNameId(ev, el.role)} className="w-full bg-slate-100 border-none 
-                        shadow-none text-slate-700 font-medium text-[0.8rem] md:text-[0.8rem] text-center h-7 px-1"
+                        shadow-none text-slate-700 font-medium text-[0.75rem] md:text-[0.75rem] text-center h-7 px-1"
                         value={el.nameId}
                         />
 
@@ -238,7 +240,7 @@ export default function Sidebar() {
     
                         <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="text-xs border-none shadow-none h-7 w-12 bg-slate-100 text-slate-700" >
+                            <Button variant="outline" className="text-[0.7rem] border-none shadow-none h-7 w-12 bg-slate-100 text-slate-700" >
                                 {el.shadeId}
                             </Button>
                         </DropdownMenuTrigger>

@@ -26,15 +26,15 @@ export default function Home() {
 
         <section className="flex justify-start">
         
-          <section className="w-[22rem]">
-            <section className="fixed top-14 left-0 h-full w-[22rem]"> 
+          <section className="w-[20rem]">
+            <section className="fixed top-14 left-0 h-full w-[20rem]"> 
               <Sidebar/>
             </section>
           </section>
 
 
   {/* donno why there is an extra 1rem here */}
-          <section className="w-[calc(100vw-23rem)]">
+          <section className="w-[calc(100vw-21rem)]">
 
             <section className="flex w-full max-h-full">
               <section className="w-[calc(100%-15rem)]">
