@@ -231,3 +231,5 @@ export const updateColorData = (newColorHex: string, color: Color) => {
     return color;
 }
 
+
+

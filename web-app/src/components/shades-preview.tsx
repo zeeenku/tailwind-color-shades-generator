@@ -2,11 +2,27 @@ import { useSelector } from "react-redux";
 import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./ui/card";
 import { StateType } from "@/store";
+import { useToast } from "@/hooks/use-toast"
+import { getBestTextColor } from "@/utils";
 
 export default function ShadesPreview() {
 
+    
     const colors = useSelector((state : StateType) => state.colors);
+    const { toast } = useToast()
 
+    const notify = (title:string, description:string) => {
+        toast({title,description})
+    }
+
+    const notifyColorCopied = (name:string, hex:string, shadeId:string) =>{
+        notify("color copied successfully", `${name} ${shadeId}: ${hex}`)
+    }
+
+    const copyColor = (name:string, hex:string, shadeId:string) => {
+        navigator.clipboard.writeText(hex)
+        notifyColorCopied(name,hex,shadeId)
+    }
     return (<div className="min-h-screen bg-slate-300 w-full">
         <Card className="rounded-none min-h-screen">
 
@@ -29,9 +45,12 @@ export default function ShadesPreview() {
             <div className="grid mt-3 grid-cols-1 sm:grid-cols-11 gap-y-3 gap-x-2 sm:mt-2 2xl:mt-0">
                 {Object.keys(color.allShades).map((shadeId)=>(
                     <div className="relative flex" key={color+shadeId}>
-                        <div className="flex items-center gap-x-3 w-full cursor-pointer sm:block sm:space-y-1.5">
+                        <button onClick={()=>copyColor(color.name ,color.allShades[shadeId],shadeId )} className="flex items-center gap-x-3 w-full cursor-pointer sm:block sm:space-y-1.5">
                             <div className="h-10 w-10 rounded dark:ring-1 dark:ring-inset dark:ring-white/10 sm:w-full" 
                                 style={{backgroundColor:color.allShades[shadeId]}}>
+                                    <span className="w-full h-full opacity-0 hover:opacity-100 flex justify-center items-center text-[0.7rem]"
+                                    style={{color: color.allShades[(parseInt(shadeId) < 500 ? 950 : 50 ).toString()]}}
+                                    >copy</span>
                             </div>
                             <div className="px-0.5">
                                 <div className="w-6 font-medium text-xs text-slate-900 2xl:w-full dark:text-white">
@@ -41,7 +60,7 @@ export default function ShadesPreview() {
                                     {color.allShades[shadeId]}
                                 </div>
                             </div>
-                        </div>
+                        </button>
                     </div>
                 ))} 
             </div>

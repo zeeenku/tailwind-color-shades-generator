@@ -4,6 +4,7 @@ import Header from "@/components/header";
 import ShadesPreview from "@/components/shades-preview";
 import Sidebar from "@/components/sidebar";
 import UiExamples from "@/components/ui-examples";
+import { Toaster } from "@/components/ui/toaster"
 
 import { Provider, useDispatch } from 'react-redux';
 import store, { addColor } from '@/store';
@@ -16,7 +17,8 @@ export default function Home() {
   return (
     <Provider store={store}>
       <main className="max-h-screen h-screen">
-        
+        <Toaster />
+
         <section className="h-14">
           <section className="fixed top-0 left-0 w-screen z-20"> 
             <Header /> 
