@@ -134,7 +134,53 @@ export const hslToRgb = (h: number, s: number, l: number) => {
     return rgb;
 };
 
-
+//todo: enhance hex to oklch
+export const hexToOklch = (hex: string) => {
+    const [r, g, b] = hexToRgb(hex);
+    return rgbToOklch(r, g, b);
+  }
+  
+  // Function to convert RGB to OKLCH
+  function rgbToOklch(r: number, g: number, b: number): { o: number; k: number; l: number; c: number; h: number } {
+    // Normalize RGB values to the range of 0-1
+    const rgb = [r / 255, g / 255, b / 255] as [number, number, number];
+  
+    // Convert RGB to XYZ
+    const [x, y, z] = rgbToXyz(rgb);
+  
+    // Convert XYZ to OKLCH
+    const [l, c, h] = xyzToOklch([x, y, z]);
+  
+    return { l, c, h, o: 1, k: 0 }; // OKLCH has (luminance, chroma, hue, opacity, blackness)
+  }
+  
+  // Convert RGB to XYZ
+  export function rgbToXyz([r, g, b]: [number, number, number]): [number, number, number] {
+    const [R, G, B] = [r, g, b].map((value) => {
+      return value <= 0.04045 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
+    });
+  
+    const x = R * 0.4124 + G * 0.3576 + B * 0.1805;
+    const y = R * 0.2126 + G * 0.7152 + B * 0.0722;
+    const z = R * 0.0193 + G * 0.1192 + B * 0.9505;
+  
+    return [x, y, z];
+  }
+  
+  // Convert XYZ to OKLCH (adjusting chroma and hue for better accuracy)
+  export function xyzToOklch([x, y, z]: [number, number, number]): [number, number, number] {
+    // Calculate luminance (L)
+    const l = 116 * Math.pow(y, 1 / 3) - 16;
+    
+    // Chroma calculation
+    const c = Math.sqrt(Math.pow(x, 2) + Math.pow(z, 2));
+  
+    // Hue calculation (atan2 gives the correct angle in radians)
+    const h = Math.atan2(z, x);
+  
+    return [l, c, h];
+  }
+  
 export const hexToHsl = (hex : string)=>{
     const [r,g,b] = hexToRgb(hex);
     return rgbToHsl(r,g,b);
