@@ -11,7 +11,7 @@ import {
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Input } from "@/components/ui/input"
-import {Trash2 as Trash2Icon, Terminal} from "lucide-react";
+import {Trash2 as Trash2Icon, Terminal, CirclePlus} from "lucide-react";
 import { addColor, changeColorName, changeColorNameId, changeColorShadeId, removeColor, StateType, updateColor } from '@/store'; 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -260,7 +260,8 @@ export default function Sidebar() {
 
 
             <div className="p-4">
-                <Button onClick={addNewColor} size="lg" className="w-full my-1">Add new color</Button>
+                <Button onClick={addNewColor} size="lg" className="w-full my-1">
+                    <CirclePlus className="w-4 h-4 text-white" /> Add new color</Button>
             </div>
     </CardContent>
     <CardFooter className="p-4">
