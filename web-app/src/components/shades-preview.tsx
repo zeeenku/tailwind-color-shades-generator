@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./ui/card";
 import { StateType } from "@/store";
 import { useToast } from "@/hooks/use-toast"
+import { exportCss, exportScss, exportTailwind3 } from "@/export-data";
 
 export default function ShadesPreview() {
 
@@ -38,7 +39,9 @@ export default function ShadesPreview() {
 
                 <div className="flex items-center space-x-3 justify-end">
                 <Button variant="outline" className="border-none shadow-none p-0 text-xs text-slate-600 h-4 hover:bg-white ">share</Button>
-                <Button variant="outline" className="border-none shadow-none p-0 text-xs text-slate-600 h-4 hover:bg-white ">export</Button>
+                <Button variant="outline" 
+                onClick={()=>alert(exportScss(color))}
+                className="border-none shadow-none p-0 text-xs text-slate-600 h-4 hover:bg-white ">export</Button>
             </div>
                 </div>
             <div className="grid mt-3 grid-cols-1 sm:grid-cols-11 gap-y-3 gap-x-2 sm:mt-2 2xl:mt-0">
