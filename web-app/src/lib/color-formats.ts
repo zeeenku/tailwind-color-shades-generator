@@ -1,9 +1,4 @@
-import { colorNames } from "./data/colors";
-import { getColorAllShades } from "./data/shades";
-import { tailwindColors } from "./data/tailwind-colors";
-import { Color, roles } from "./types";
-
-
+//? read & learn in more depth more on why these functions are like this and stuff
 
 export const isValidHex = (color : string) => {
     if(color[0] !== "#" || color.length < 4 || color.length > 7) return false;
@@ -42,7 +37,7 @@ export const isValidRgb = (rgbParts: string[]) => {
     });
 };
 
-// Function to check if HSL values are valid
+
 export const isValidHsl = (hslParts: string[]) => {
     if (hslParts.length !== 3) return false;
     if(!hslParts[1].includes("%") || !hslParts[2].includes("%")) return false;
@@ -58,6 +53,7 @@ export const isValidHsl = (hslParts: string[]) => {
     l >= 0 && l <= 100
     );
 };
+
 
 export const rgbToHsl = (r: number, g: number, b: number) => {
     r /= 255;
@@ -91,6 +87,8 @@ export const rgbToHsl = (r: number, g: number, b: number) => {
 export const rgbToHex = (r: number, g: number, b: number) => {
     return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toLowerCase()}`;
 };
+
+
 
 export const hexToRgb = (hex: string): [number, number, number] => { 
 
@@ -136,7 +134,8 @@ export const hslToRgb = (h: number, s: number, l: number) => {
     return rgb;
 };
 
-// HSL to HEX conversion helper
+
+
 export const hslToHex = (h: number, s: number, l: number) => {
     s /= 100;
     l /= 100;
@@ -160,126 +159,5 @@ export const hslToHex = (h: number, s: number, l: number) => {
 
     return rgbToHex(r, g, b);
 };
-
-export const getRandomColor = () => {
-
-    const chars = ["1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"]
-    let color = "#";
-    for(let i=1;i<=6;i++){
-        color += chars[Math.floor(Math.random()*chars.length)];
-    }
-    return color;
-}
-
-
-
-
-
-const getNameId = (name : string)=>{
-
-    name = name.trim().toLowerCase();
-    if(!name.includes(" ")) return name;
-
-    const parts = name.split(" ");
-    const len = parts.length;
-    const chunkLen = len == 2 ? 3 : 2;
-    let result = parts[len-1];
-    for(let i = len - 2;i >= 0; i--){
-        result = parts[i].slice(0,chunkLen) + "-" +result;
-    }
-
-    return result;
-}
-
-
-
-export const getShadeIdOfColor = (color : string) => {
-    const rgb = hexToRgb(color);
-    let closestShadeId = "";
-    let minDistance = Infinity;
-
-    Object.keys(tailwindColors).forEach((name) => {
-    Object.keys(tailwindColors[name]).forEach((shadeId) => {
-        const hex = tailwindColors[name][shadeId];
-        const shadeRgb = hexToRgb(hex); 
-        const distance = calculateColorDistance(rgb, shadeRgb);
-
-        if (distance < minDistance) {
-        minDistance = distance;
-        closestShadeId = shadeId;
-        }
-    });
-    });
-
-    return parseInt(closestShadeId);
-};
-
-const calculateColorDistance = (rgb1 : number[], rgb2: number[]) => {
-    const [r1, g1, b1] = rgb1;
-    const [r2, g2, b2] = rgb2;
-    return Math.sqrt(Math.pow(r2 - r1, 2) + Math.pow(g2 - g1, 2) + Math.pow(b2 - b1, 2));
-};
-
-export const getNameOfColor = (color : string) => {
-    const rgb = hexToRgb(color);
-    
-    let closestColor = "";
-    let minDistance = Infinity;
-    colorNames.forEach((el) => {
-        const distance = calculateColorDistance(rgb, el.rgb);
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestColor = el.name;
-        }
-    });
-    //todo: abbrevitae in a good way formulate color to make it smaller
-    //ex: persian-indigo ==> p-indigo as id
-    return closestColor.replaceAll("-"," ");
-};
-
-
-
-export const getShadesOfColor = (hexVal : string, shadeId: number) => {
-    return getColorAllShades(hexVal, shadeId);
-}
-
-
-
-export const getNewRandomColorData = (colorIndex : number) => {
-
-            // gen random hex
-            // detect name from hex code
-            // detect best id based on color
-            // detect role based on order
-        
-    const hex = getRandomColor();
-    const shadeId = getShadeIdOfColor(hex);
-    const name = getNameOfColor(hex).toLowerCase();
-    const newColor : Color = {
-        hexVal: hex,
-        name: name,
-        shadeId:shadeId, 
-        nameId: getNameId(name),
-        role: roles[colorIndex],
-        allShades : getShadesOfColor(hex,shadeId)
-    };
-    return newColor;
-}
-
-
-export const updateColorData = (newColorHex: string, color: Color) => {
-    const shadeId = getShadeIdOfColor(newColorHex);
-    const name = getNameOfColor(newColorHex).toLowerCase();
-    color = {
-        hexVal: newColorHex,
-        name: name,
-        nameId: getNameId(name),
-        shadeId:shadeId, 
-        role: color.role,
-        allShades : getShadesOfColor(newColorHex,shadeId)
-    };
-    return color;
-}
-
 
 

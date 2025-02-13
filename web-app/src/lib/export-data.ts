@@ -1,4 +1,4 @@
-import { Color } from "./types"
+import { Color } from "../types"
 
 export const  exportTailwind3 = (color : Color) => {
     let res = `\n'${color.nameId}': {`;

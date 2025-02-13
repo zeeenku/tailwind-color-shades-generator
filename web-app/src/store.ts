@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import {Color, roles} from "@/types";
-import { getNewRandomColorData, getShadesOfColor, updateColorData } from './utils';
+import { getNewRandomColorData, getShadesOfColor, updateColorData } from './lib/color-func';
 
 
 export type StateType = {

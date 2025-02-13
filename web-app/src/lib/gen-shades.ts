@@ -1,6 +1,8 @@
-import { hexToRgb, hslToRgb, rgbToHex, rgbToHsl } from "@/utils";
-import { tailwindColors } from "./tailwind-colors";
+import { tailwindColors } from "../data/tailwind-colors";
 import { shadeIds } from "@/types";
+import { hexToRgb, rgbToHex } from "./color-formats";
+
+//todo: to enhance algorithm
 
 const cosine_sim = (rgb1: number[], rgb2: number[]): number => {
     const dotProduct = rgb1[0] * rgb2[0] + rgb1[1] * rgb2[1] + rgb1[2] * rgb2[2];

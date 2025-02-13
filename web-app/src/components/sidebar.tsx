@@ -9,24 +9,21 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Button } from "./ui/button";
-import { Switch } from "./ui/switch";
 import { Input } from "@/components/ui/input"
 import {Trash2 as Trash2Icon, Terminal, CirclePlus} from "lucide-react";
-import { addColor, changeColorName, changeColorNameId, changeColorShadeId, removeColor, StateType, updateColor } from '@/store'; 
+import { addColor, changeColorNameId, changeColorShadeId, removeColor, StateType, updateColor } from '@/store'; 
 import { useSelector, useDispatch } from 'react-redux';
 
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { shadeIds } from "@/types";
-import { rgbToHex, hslToHex, isValidHex, cleanColorString, isValidHsl, isValidRgb } from "@/utils";
+import { rgbToHex, hslToHex, isValidHex, cleanColorString, isValidHsl, isValidRgb } from "@/lib/color-formats";
 
 
 type Color = {
@@ -50,7 +47,6 @@ export default function Sidebar() {
 
     // separate the color string values from the global state
     // make it more effecient for color detection of multiple formats, and in case of bad format
-    // return it to previous state value
     type ColorStringInputs = { [key: string]: string };
     const [colorStringInputs, setColorStringInputs] = useState<ColorStringInputs>({});
 
@@ -77,9 +73,8 @@ export default function Sidebar() {
     }
 
 
-    //? maybe make the feature of name and also name Id....
     const onChangeNameId = (event : ChangeEvent<HTMLInputElement> ,role : string) => {
-        // validate name
+        // validate nameId
         const newNameId = event.target.value.toLowerCase().replaceAll(" ", "-");
         if(newNameId.length > 15 || newNameId.length < 1) return;
         dispatch(changeColorNameId(newNameId, role));
@@ -90,7 +85,6 @@ export default function Sidebar() {
         if(!shadeIds.includes(shadeId)) return;
         dispatch(changeColorShadeId(shadeId, role));
     }
-
 
 
     
@@ -155,8 +149,6 @@ export default function Sidebar() {
 
 
 
-
-    // make color string inputs equal to state color hex values
     const reinitColorStrings = () => {
         const newColorStringInputs = colors.reduce((acc : ColorStringInputs , el) => {
             acc[el.role] = el.hexVal;
@@ -165,117 +157,108 @@ export default function Sidebar() {
         setColorStringInputs(newColorStringInputs);
     };
 
-
+    //whenver colors data changes from color picker reinit string inputs
     useEffect(()=>{
         reinitColorStrings();
     },[colors]);
 
 
 
-    
 
 
-    return (<aside className="bg-slate-50 h-full  w-[20rem]">
+return (
+<aside className="bg-slate-50 h-full  w-[20rem]">
     <Card className="h-full max-h-full p-0 pb-14 overflow-y-auto rounded-none bg-slate-50">
-    <CardHeader className="p-4">
-        <CardTitle className="text-md">TailShadescn CSS Shades Generator</CardTitle>
-        <CardDescription>The best shades generator, as beautiful as the Tailwind shades, for any color, with an integrated ShadCN theme generator.</CardDescription>
 
-    </CardHeader>
+        <CardHeader className="p-4">
+            <CardTitle className="text-md">TailShadescn CSS Shades Generator</CardTitle>
+            <CardDescription>The best shades generator, as beautiful as the Tailwind shades, for any color, with an integrated ShadCN theme generator.</CardDescription>
+        </CardHeader>
+
     <CardContent className="p-0">
 
+        { colors.map((el)=>(
+            <div key={el.role} className="border-b border-slate-300 p-4 pb-5">
 
+                <div className="flex justify-between items-center mb-1">
+                    <h3 className="capitalize text-sm">{el.role}</h3>
+                    {colors.length > 1 && <Button onClick={()=>onRemoveColor(el.role)} variant="outline" size="icon" className="rounded-full bg-slate-50 shadow-none border-none h-6 w-6">
+                        <Trash2Icon className="h-3 w-3 text-slate-600"></Trash2Icon>
+                    </Button>}
+                </div>
 
+                <Card>
+                    <CardContent className="p-2">
+                        <div className="flex justify-between items-center">
 
+                            <div className="flex items-center justify-center w-[5.5rem] h-6">
+                                <input type="color" id={el.role} name="color" className="w-0 h-0" 
+                                value={el.hexVal} onChange={(val) => onChangeColor(val, el.role)}
+                                />
+                                <label 
+                                htmlFor={el.role} 
+                                className="inline-block border cursor-pointer aspect-square me-1 my-1 h-5 rounded-full"
+                                style={{ backgroundColor: el.hexVal }}
+                                ></label>
 
-{colors.map((el)=>{
-    return (<div key={el.role} className="border-b border-slate-300 p-4 pb-5">
-        <div className="flex justify-between items-center mb-1">
-            <h3 className="capitalize text-sm">{el.role}</h3>
-    
+                            
+                                <Input
+                                type="text"
+                                onBlur={reinitColorStrings}
+                                value={colorStringInputs[el.role] || ""}
+                                onChange={(ev) => onChangeColorStringInput(ev, el.role)}
+                                placeholder="color"
+                                className="w-full h-6 text-xs text-[0.75rem] md:text-[0.75rem] px-1 ms-1 focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none"
+                                />
 
-            {colors.length > 1 && <Button onClick={()=>onRemoveColor(el.role)} variant="outline" size="icon" className="rounded-full bg-slate-50 shadow-none border-none h-6 w-6">
-                <Trash2Icon className="h-3 w-3 text-slate-600"></Trash2Icon>
-            </Button>}
-        </div>
-        <Card >
-                <CardContent className="p-2">
-                    <div className="flex justify-between items-center">
-                
-    
-                    <div className="flex items-center justify-center w-[5.5rem] h-6">
-                            <input type="color" id={el.role} name="color" className="w-0 h-0" 
-                            value={el.hexVal} onChange={(val) => onChangeColor(val, el.role)}
-                            />
-                            <label 
-                            htmlFor={el.role} 
-                            className="inline-block border cursor-pointer aspect-square me-1 my-1 h-5 rounded-full"
-                            style={{ backgroundColor: el.hexVal }}
-                            ></label>
+                                
+                            </div>
+        
+                            <div className="flex">
 
-                        
-                            <Input
-                            type="text"
-                            onBlur={reinitColorStrings}
-                            value={colorStringInputs[el.role] || ""}
-                            onChange={(ev) => onChangeColorStringInput(ev, el.role)}
-                            placeholder="color"
-                            className="w-full h-6 text-xs text-[0.75rem] md:text-[0.75rem] px-1 ms-1 focus:outline-none focus:outline-transparent focus:border-none border-none shadow-none"
-                            />
+                                <div className="relative w-24 ">
+                                    <Input type="text" placeholder="name" onChange={(ev)=>onChangeNameId(ev, el.role)} className="w-full bg-slate-100 border-none 
+                                    shadow-none text-slate-700 font-medium text-[0.75rem] md:text-[0.75rem] text-center h-7 px-1"
+                                    value={el.nameId}
+                                    />
+                                </div>
 
-                        
+                                <span className="mx-1">-</span>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" className="text-[0.7rem] border-none shadow-none h-7 w-12 bg-slate-100 text-slate-700" >
+                                            {el.shadeId}
+                                        </Button>
+                                    </DropdownMenuTrigger>
+        
+                                    <DropdownMenuContent className="flex py-2 flex-wrap gap-0.5 justify-center w-36">
+                                        {shadeIds.map(id=>(<DropdownMenuItem className={`${id == el.shadeId ? "bg-slate-200" : "" } w-10 block text-center text-xs cursor-pointer`} key={el.role+id} onClick={()=>onChangeShadeId(id, el.role)}>{id}</DropdownMenuItem>))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
                         </div>
-    
-                        <div className="flex">
-                        <div className="relative w-24 ">
-                        <Input type="text" placeholder="name" onChange={(ev)=>onChangeNameId(ev, el.role)} className="w-full bg-slate-100 border-none 
-                        shadow-none text-slate-700 font-medium text-[0.75rem] md:text-[0.75rem] text-center h-7 px-1"
-                        value={el.nameId}
-                        />
-
-                        
-                        </div>
-                        <span className="mx-1">-</span>
-    
-    
-                        <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="text-[0.7rem] border-none shadow-none h-7 w-12 bg-slate-100 text-slate-700" >
-                                {el.shadeId}
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="flex py-2 flex-wrap gap-0.5 justify-center w-36">
-                            {shadeIds.map(id=>(<DropdownMenuItem className={`${id == el.shadeId ? "bg-slate-200" : "" } w-10 block text-center text-xs cursor-pointer`} key={el.role+id} onClick={()=>onChangeShadeId(id, el.role)}>{id}</DropdownMenuItem>))}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                        </div>
-                    </div>
-    
-                </CardContent>
-    
-            </Card>
-    
-            </div>);
-})}
-
-
+                    </CardContent>
+                </Card>
+            </div>))}
 
 
             <div className="p-4">
                 <Button onClick={addNewColor} size="lg" className="w-full my-1">
                     <CirclePlus className="w-4 h-4 text-white" /> Add new color</Button>
             </div>
-    </CardContent>
-    <CardFooter className="p-4">
-        <Alert className="mt-3 mb-1">
-            <Terminal className="h-4 w-4" />
-            <AlertTitle>Heads up!</AlertTitle>
-            <AlertDescription>
-                You can add components to your app using the cli.
-            </AlertDescription>
-        </Alert>
-    </CardFooter>
+        </CardContent>
 
-    </Card>
-    </aside>);
+        <CardFooter className="p-4">
+            <Alert className="mt-3 mb-1">
+                <Terminal className="h-4 w-4" />
+                <AlertTitle>Heads up!</AlertTitle>
+                <AlertDescription>
+                    You can add components to your app using the cli.
+                </AlertDescription>
+            </Alert>
+        </CardFooter>
+
+        </Card>
+    </aside>
+);
 }

@@ -1,4 +1,9 @@
-export const colorNames = [
+export type ColorName = {
+    name : string,
+    rgb : [number, number,number]
+};
+
+export const colorNames : ColorName[] = [
     {
         "name": "abbey",
         "rgb": [
