@@ -8,4 +8,18 @@ export type Color = {
 }
 
 export const shadeIds = [50,100,200,300,400,500,600,700,800,900,950];
-export const roles = ["primary","secondary","tertiary","fourhtly","fifthy"];
+
+export const roles = [
+    "primary",
+    "secondary",
+    "tertiary",
+    "fourthly",
+    "fifthly",
+    "sixthly",
+    "seventhly",
+    "eighthly",
+    "ninthly",
+    "tenthly",
+    "eleventhly",
+    "twelfthly"
+];

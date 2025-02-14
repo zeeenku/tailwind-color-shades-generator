@@ -32,12 +32,11 @@ export const  exportTailwind4 = (colors : Color[]) => {
 
 
 
-//todo: add export svg & png
 export const  exportCss = (colors : Color[]) => {
     let res = "";
     colors.forEach((color,index)=>{
     res += index > 0 ? "\n\n\n" : "";
-    res += `//bg ${color.name}\n`;
+    res += `/*bg ${color.name}*/\n`;
 Object.keys(color.allShades).forEach((el)=>{
 res += `
 .bg-${color.nameId}-${el} {
@@ -47,7 +46,7 @@ background-color: ${color.allShades[el]};
 
 
 
-res += `\n\n\n//text ${color.name}\n`;
+res += `\n\n\n/*text ${color.name}*/\n`;
 Object.keys(color.allShades).forEach((el)=>{
 res += `
 .text-${color.nameId}-${el} {
@@ -62,29 +61,27 @@ color: ${color.allShades[el]};
 }
 
 export const  exportScss = (colors : Color[]) => {
-    let res = "";
+    let res = "$colors : (\n";
     colors.forEach((color,index)=>{
-    res += index > 0 ? "\n\n\n" : "";
-    res += `$${color.name.replaceAll(" ","")}:(`;
+    res += index > 0 ? "\n\n" : "";
+    res += `//${color.name}`;
     Object.keys(color.allShades).forEach((el)=>{
         res += `\n"${color.nameId}-${el}" : ${color.allShades[el]},`;
     })
+    });
+
     res +=`
 );
 
 
 @each $name, $color in $colors {
-
 .bg-#{$name}{
     background-color: #{$color};
 } 
 .text-#{$name}{
     color: #{$color};
 } 
-
 }`;
-    });
-
     return res;
     
     

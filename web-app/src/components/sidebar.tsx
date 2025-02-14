@@ -243,8 +243,10 @@ return (
 
 
             <div className="p-4">
+                {colors.length < 12 && 
                 <Button onClick={addNewColor} size="lg" className="w-full my-1">
                     <CirclePlus className="w-4 h-4 text-white" /> Add new color</Button>
+                }
             </div>
         </CardContent>
 

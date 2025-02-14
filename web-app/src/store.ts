@@ -72,8 +72,28 @@ export const updateColor = (colorHex: string, role: string) => {
                 return el;
             });
 
-        //todo: add feature to detect value of color after n seconds, if same then send http req to increment
-        //todo: shades generated counter
+        // send req to backend to inc color shades counter
+        //todo: to update later
+        setTimeout(() => {
+            if (colorHex === getState().colors[role].hexVal) {
+                fetch("/add-color", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ color: colorHex })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("New color added:", data);
+                })
+                .catch(e => {
+                    console.error("Error adding color:", e);
+                });
+            }
+        }, 1200);
+
+
         dispatch({
             type: Actions.UPDATECOLOR,
             payload: newColors,

@@ -12,6 +12,7 @@ export default function ShadesPreview() {
     
     const colors = useSelector((state : StateType) => state.colors);
     const [shadesGeneratedCounter, setShadesGeneratedCounter] = useState("0");
+    const { toast } = useToast()
 
     useEffect(()=>{
         //todo: add http req to get ounter from backend
@@ -21,7 +22,6 @@ export default function ShadesPreview() {
 
 
     const notify = (title:string, description:string) => {
-        const { toast } = useToast()
         toast({title,description})
     }
 

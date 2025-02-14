@@ -131,6 +131,8 @@ const ExportDialog: React.FC<Props> = ({ type, data, children }) =>  {
                                 <pre className="text-md max-h-[50vh] rounded-md overflow-y-auto">
                                 {exportOptions.map((el) => (
                                     <div key={el} className="">
+
+                                        <TabsContent value={el} className="p-6 relative my-0 rounded-md rounded-tr-none">
                                         <Button 
                                         className="absolute right-7 top-3 h-6"
                                         onClick={() => copy(el)} 
@@ -139,7 +141,6 @@ const ExportDialog: React.FC<Props> = ({ type, data, children }) =>  {
                                         >
                                         copy
                                         </Button>
-                                        <TabsContent value={el} className="p-6 my-0 rounded-md rounded-tr-none">
                                         {codes[el]}
                                         </TabsContent>
                                     </div>
