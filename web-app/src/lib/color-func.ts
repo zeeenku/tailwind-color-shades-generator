@@ -6,9 +6,24 @@ import { hexToRgb } from "./color-formats";
 
 
 
-//? to add....
 export const getColorFormatRecom = () => {
 
+    const data = {
+        "rgb" : [
+            "171 108 135",
+            "171, 113, 115",
+            "rgb(11, 138, 131)",
+        ],
+
+        "hsl" : [
+            "hsl(0, 100%, 50%)",
+            "4°, 25%, 56%",
+            "4, 25%, 56%",
+        ],
+    }
+    const type = Math.floor(Math.random() * 100) % 2 == 0 ? "rgb" : "hsl";
+    const index = Math.floor(Math.random() * 100) % 3;
+    return {type, example: data[type][index]};
 }
 
 export const getRandomColor = () => {

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card"
 import { Button } from "./ui/button";
 import { Input } from "@/components/ui/input"
-import {Trash2 as Trash2Icon, Terminal, CirclePlus} from "lucide-react";
+import {Trash2 as Trash2Icon, Terminal, CirclePlus, AlertCircle} from "lucide-react";
 import { addColor, changeColorNameId, changeColorShadeId, removeColor, StateType, updateColor } from '@/store'; 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -24,6 +24,7 @@ import { Alert, AlertTitle, AlertDescription } from "./ui/alert";
 import { ChangeEvent, useEffect, useState } from "react";
 import { shadeIds } from "@/types";
 import { rgbToHex, hslToHex, isValidHex, cleanColorString, isValidHsl, isValidRgb } from "@/lib/color-formats";
+import { getColorFormatRecom } from "@/lib/color-func";
 
 
 type Color = {
@@ -43,7 +44,7 @@ export default function Sidebar() {
     // global state components
     const dispatch = useDispatch();
     const colors = useSelector((state : StateType) => state.colors);
-
+    const [recom, setRecom] = useState<{[key:string]:string}>({});
 
     // separate the color string values from the global state
     // make it more effecient for color detection of multiple formats, and in case of bad format
@@ -55,6 +56,7 @@ export default function Sidebar() {
     //to solve hydration error
     useEffect(()=>{
         dispatch(addColor());
+        setRecom(getColorFormatRecom());
     },[])
 
     const addNewColor = async () => {
@@ -247,18 +249,24 @@ return (
                 <Button onClick={addNewColor} size="lg" className="w-full my-1">
                     <CirclePlus className="w-4 h-4 text-white" /> Add new color</Button>
                 }
+                <Alert className="mt-4">
+                {/* <AlertCircle className="h-4 w-4 m-0" /> */}
+                <AlertTitle >Paste any color you want</AlertTitle>
+                <AlertDescription className="text-slate-600 text-xs">multiple color formats supported!</AlertDescription>
+                <div className="mt-2 text-xs">
+                    {recom.type} example:                    
+                    <span className="text-sm inline-block px-1 rounded-md">
+                        {recom.example}
+                    </span>
+                </div>
+
+            </Alert>
             </div>
         </CardContent>
 
-        <CardFooter className="p-4">
-            <Alert className="mt-3 mb-1">
-                <Terminal className="h-4 w-4" />
-                <AlertTitle>Heads up!</AlertTitle>
-                <AlertDescription>
-                    You can add components to your app using the cli.
-                </AlertDescription>
-            </Alert>
-        </CardFooter>
+        {/* <CardFooter className="p-4">
+
+        </CardFooter> */}
 
         </Card>
     </aside>
