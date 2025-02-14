@@ -11,8 +11,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "./ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { exportCss, exportScss, exportTailwind3, exportTailwind4 } from "@/lib/export-data";
-import { hexToHsl, hexToOklch, hexToRgb } from "@/lib/color-formats";
+import { hexToHsl, hexToRgb } from "@/lib/color-formats";
 import { useToast } from "@/hooks/use-toast";
+import ColorIO from "colorjs.io";
 
 
 type Props = {
@@ -53,8 +54,7 @@ const ExportDialog: React.FC<Props> = ({ type, data, children }) =>  {
                 updatedShades[shade] = `hsl(${Math.round(h)},${Math.round(s)}%,${Math.round(l)}%)`;
             } 
             else if (colorFormat === "oklch") {
-                const {o,k,l,c,h} = hexToOklch(updatedShades[shade]);
-                updatedShades[shade] = `oklch(${(l).toFixed(2)}% ${(c).toFixed(2)} ${(h).toFixed(2)})`;
+                updatedShades[shade] = (new ColorIO(updatedShades[shade])).to("oklch").toString({precision: 3});
             }
             // For "hex", no conversion is needed since it's the default format
             });
